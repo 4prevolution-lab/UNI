@@ -316,6 +316,59 @@ export function pilotToMission(pilot) {
   };
 }
 
+export function upsertPortfolio(portfolio, state) {
+  if (!state?.mission?.id) throw new Error("La mission doit posséder un identifiant.");
+  const base = portfolio && typeof portfolio === "object" ? portfolio : { version: "0.1", workspaces: {} };
+  return {
+    ...base,
+    version: "0.1",
+    updatedAt: now(),
+    activeId: state.mission.id,
+    workspaces: {
+      ...(base.workspaces || {}),
+      [state.mission.id]: { ...state, portfolioUpdatedAt: now() }
+    }
+  };
+}
+
+export function portfolioSummaries(portfolio) {
+  return Object.values(portfolio?.workspaces || {})
+    .map((workspace) => {
+      const metrics = missionMetrics(workspace);
+      return {
+        id: workspace.mission.id,
+        title: workspace.mission.title,
+        owner: workspace.mission.owner,
+        status: workspace.mission.status,
+        deadline: workspace.mission.deadline,
+        contributions: metrics.total,
+        evidenceRate: metrics.evidenceRate,
+        validationRate: metrics.validationRate,
+        updatedAt: workspace.portfolioUpdatedAt || workspace.mission.createdAt
+      };
+    })
+    .sort((a, b) => String(b.updatedAt || "").localeCompare(String(a.updatedAt || "")));
+}
+
+export function duplicateAsTemplate(state) {
+  const copy = JSON.parse(JSON.stringify(state));
+  copy.mission = {
+    ...copy.mission,
+    id: uid("mission"),
+    title: `${copy.mission.title} — modèle`,
+    status: "draft",
+    createdAt: now(),
+    completedCriteria: []
+  };
+  copy.people = [];
+  copy.contributions = [];
+  copy.activity = [];
+  copy.capabilities = copy.capabilities.map((capability) => ({ ...capability, available: 0 }));
+  copy.goalos = { ...copy.goalos, lastExportAt: null, lastProofBundle: null };
+  addActivity(copy, "mission.duplicated", "Espace créé à partir d’un modèle sans personnes, contributions ni preuves.");
+  return copy;
+}
+
 export function buildGoalOSExport(state) {
   const metrics = missionMetrics(state);
   return {

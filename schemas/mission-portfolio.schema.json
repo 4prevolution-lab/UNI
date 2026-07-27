@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uni.4prevolution.org/schemas/mission-portfolio/v0.1",
+  "title": "UNI Mission Portfolio",
+  "type": "object",
+  "required": ["version", "activeId", "workspaces"],
+  "properties": {
+    "version": { "const": "0.1" },
+    "activeId": { "type": ["string", "null"] },
+    "updatedAt": { "type": "string", "format": "date-time" },
+    "workspaces": {
+      "type": "object",
+      "additionalProperties": {
+        "allOf": [
+          { "$ref": "mission-lab-state.schema.json" }
+        ]
+      }
+    }
+  }
+}

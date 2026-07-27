@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1020">
+    <title>Portefeuille de missions — UNI</title>
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="verifier-page">
+    <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+    <main class="portfolio-shell">
+      <header class="portfolio-top">
+        <a class="brand verifier-brand" href="./"><span class="brand-mark">U</span><span><strong>UNI</strong><small>MISSION PORTFOLIO</small></span></a>
+        <div class="button-row"><button class="quiet" id="importPortfolio">Importer</button><button class="button secondary" id="exportPortfolio">Exporter le portefeuille</button><a class="button primary link-button" href="pilot.html">+ Nouveau pilote</a></div>
+        <input id="portfolioInput" type="file" accept="application/json" hidden>
+      </header>
+      <section class="portfolio-heading">
+        <div><span class="eyebrow accent">ESPACES ISOLÉS</span><h1>Portefeuille de missions</h1><p>Conserver plusieurs missions localement sans mélanger leurs personnes, preuves ou validations.</p></div>
+        <div class="portfolio-count"><strong id="workspaceCount">0</strong><small>espaces</small></div>
+      </section>
+      <div class="portfolio-grid" id="portfolioGrid"></div>
+      <section class="panel portfolio-notice"><div><span class="eyebrow">PORTABILITÉ</span><h2>Le portefeuille reste sous votre contrôle.</h2></div><p>Chaque espace est conservé dans ce navigateur. Exportez régulièrement le portefeuille avant d’effacer les données locales. N’utilisez pas cette version pour des renseignements confidentiels ou réglementés.</p></section>
+      <footer class="verifier-footer"><a href="./">← Retour au Mission Lab</a><span>Stockage local · Espaces séparés</span></footer>
+    </main>
+    <div class="toast" id="toast" hidden><strong></strong><span></span></div>
+    <script type="module" src="portfolio.js"></script>
+  </body>
+</html>

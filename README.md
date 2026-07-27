@@ -61,6 +61,8 @@ Le dépôt contient maintenant un MVP fonctionnel de la boucle de mission :
 - brouillons d'attestations structurés selon Open Badges 3.0.
 - Pilot Launchpad avec dix conditions de préparation transparentes;
 - export d'une charte de pilote et transfert direct vers Mission Lab.
+- portefeuille local multi-missions avec activation explicite;
+- duplication de modèles sans personnes, contributions, preuves ou historique.
 
 ### Lancer localement
 
@@ -90,6 +92,8 @@ Les tests vérifient notamment que le produit ne confond jamais preuve et valida
 Le vérificateur autonome est accessible dans [`verify.html`](verify.html). Les fichiers analysés ne quittent pas le navigateur.
 
 Le [`Pilot Launchpad`](pilot.html) qualifie une communauté, une mission et ses règles de confiance avant de remplacer les données de démonstration. Il n'utilise aucun score opaque : les dix conditions sont visibles et vérifiables séparément.
+
+Le [`Mission Portfolio`](portfolio.html) conserve plusieurs espaces locaux et permet l'export d'une archive complète. Son schéma est documenté dans [`schemas/mission-portfolio.schema.json`](schemas/mission-portfolio.schema.json).
 
 Le compilateur local n'appelle aucun modèle externe. Il propose des contributions à partir des écarts de capacités déclarés, laisse le responsable non assigné et exige une décision humaine.
 

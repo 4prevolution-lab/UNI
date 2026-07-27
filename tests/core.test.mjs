@@ -9,10 +9,13 @@ import {
   claimLevel,
   compileContributionSuggestions,
   createDemoState,
+  duplicateAsTemplate,
   evaluatePilot,
   missionMetrics,
   normalizeState,
   pilotToMission,
+  portfolioSummaries,
+  upsertPortfolio,
   verifyProofBundle
 } from "../core.js";
 
@@ -119,4 +122,23 @@ test("une charte pilote devient une mission bornée", () => {
   assert.equal(mission.deadline, "2026-08-29");
   assert.deepEqual(mission.successCriteria, ["Critère A", "Critère B"]);
   assert.equal(mission.pilot.participants, 18);
+});
+
+test("le portefeuille conserve des espaces de mission séparés", () => {
+  const first = createDemoState();
+  const second = duplicateAsTemplate(first);
+  let portfolio = upsertPortfolio(null, first);
+  portfolio = upsertPortfolio(portfolio, second);
+  assert.equal(Object.keys(portfolio.workspaces).length, 2);
+  assert.equal(portfolioSummaries(portfolio).length, 2);
+  assert.notEqual(first.mission.id, second.mission.id);
+});
+
+test("une duplication comme modèle retire les personnes et les preuves", () => {
+  const source = createDemoState();
+  const template = duplicateAsTemplate(source);
+  assert.equal(template.people.length, 0);
+  assert.equal(template.contributions.length, 0);
+  assert.ok(template.capabilities.every((capability) => capability.available === 0));
+  assert.equal(source.people.length, 3);
 });
