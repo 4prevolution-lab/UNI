@@ -37,6 +37,48 @@ Le premier produit proposé est un **Mission Lab** : un espace où une petite co
 - [05 — Risques et principes de gouvernance](05-RISQUES-ET-GOUVERNANCE.md)
 - [Décisions à prendre](DECISIONS.md)
 
+## UNI Mission Lab — MVP
+
+Le dépôt contient maintenant un MVP fonctionnel de la boucle de mission :
+
+- constitution de mission et critères de succès;
+- cartographie des capacités et détection des lacunes;
+- équipe avec consentement et visibilité contrôlée;
+- portefeuille de contributions;
+- déclaration distincte du rôle humain et de l'usage de l'IA;
+- preuves, provenance et validation humaine;
+- niveaux d'affirmation explicites;
+- bilan et attestations contextuelles;
+- journal d'activité;
+- persistance locale et export JSON;
+- pont d'interopérabilité GoalOS v0.1.
+
+### Lancer localement
+
+Prérequis : Node.js 20 ou plus récent.
+
+```bash
+npm start
+```
+
+Ouvrir ensuite `http://localhost:4173`.
+
+### Tester
+
+```bash
+npm test
+```
+
+Les tests vérifient notamment que le produit ne confond jamais preuve et validation, et que le paquet GoalOS conserve les conditions d'arrêt et la posture de preuve.
+
+### Données et confidentialité
+
+Cette première version ne possède pas de backend. Les données restent dans le stockage local du navigateur jusqu'à leur export explicite par l'utilisateur. La démonstration utilise des données synthétiques : aucune donnée confidentielle ne doit être saisie avant un déploiement protégé révisé.
+
+### Déploiement
+
+Le workflow GitHub Actions exécute les tests et déploie l'application sur GitHub Pages à chaque mise à jour de `main`, lorsque Pages est configuré avec la source **GitHub Actions** dans les paramètres du dépôt.
+
 ## État actuel
 
-Version 0.1 — fondation stratégique. Les prochaines étapes sont de choisir la première communauté pilote, la première mission et le résultat mesurable.
+Version 0.1 — fondation stratégique et MVP statique. Les prochaines étapes sont de choisir la première communauté pilote, la première mission et le résultat mesurable, puis de remplacer la persistance locale par un environnement protégé multiutilisateur.

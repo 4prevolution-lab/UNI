@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="UNI Mission Lab — coordonner des capacités humaines et artificielles autour de missions vérifiables.">
+    <meta name="theme-color" content="#0b1020">
+    <title>UNI Mission Lab</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <div class="ambient ambient-one"></div>
+    <div class="ambient ambient-two"></div>
+    <aside class="sidebar">
+      <a class="brand" href="#dashboard" aria-label="UNI Mission Lab">
+        <span class="brand-mark">U</span>
+        <span><strong>UNI</strong><small>MISSION LAB</small></span>
+      </a>
+      <nav id="mainNav" aria-label="Navigation principale">
+        <button class="nav-item active" data-route="dashboard"><span>◫</span> Vue mission</button>
+        <button class="nav-item" data-route="mission"><span>◎</span> Constitution</button>
+        <button class="nav-item" data-route="capabilities"><span>◇</span> Capacités</button>
+        <button class="nav-item" data-route="team"><span>◌</span> Équipe</button>
+        <button class="nav-item" data-route="contributions"><span>△</span> Contributions</button>
+        <button class="nav-item" data-route="proof"><span>◆</span> Preuves</button>
+        <button class="nav-item" data-route="outcomes"><span>↗</span> Bilan</button>
+        <button class="nav-item" data-route="goalos"><span>Ω</span> GoalOS</button>
+      </nav>
+      <div class="sidebar-foot">
+        <div class="privacy-badge"><i></i><span>Données locales<br><small>Aucune vente · export libre</small></span></div>
+        <button class="quiet full" id="resetDemo">Réinitialiser la démo</button>
+      </div>
+    </aside>
+
+    <main>
+      <header class="topbar">
+        <button class="menu-button" id="menuButton" aria-label="Ouvrir la navigation">☰</button>
+        <div class="mission-crumb">
+          <span class="eyebrow">MISSION ACTIVE</span>
+          <strong id="topMissionTitle"></strong>
+        </div>
+        <div class="top-actions">
+          <span class="save-state" id="saveState">● Sauvegardé localement</span>
+          <button class="quiet" id="importButton">Importer</button>
+          <button class="button secondary" id="exportButton">Exporter</button>
+          <input id="importInput" type="file" accept="application/json" hidden>
+        </div>
+      </header>
+
+      <section class="view active" id="view-dashboard">
+        <div class="hero">
+          <div>
+            <span class="eyebrow accent">CENTRE DE COORDINATION</span>
+            <h1 id="heroTitle"></h1>
+            <p id="heroOutcome" class="lead"></p>
+            <div class="hero-meta" id="heroMeta"></div>
+          </div>
+          <div class="mission-ring" id="missionRing">
+            <svg viewBox="0 0 120 120" aria-hidden="true">
+              <circle class="ring-track" cx="60" cy="60" r="50"></circle>
+              <circle class="ring-value" cx="60" cy="60" r="50"></circle>
+            </svg>
+            <strong id="ringValue">0%</strong>
+            <small>preuves</small>
+          </div>
+        </div>
+
+        <div class="metrics" id="metricGrid"></div>
+
+        <div class="dashboard-grid">
+          <section class="panel span-2">
+            <div class="panel-head">
+              <div><span class="eyebrow">FLUX DE MISSION</span><h2>Contributions en cours</h2></div>
+              <button class="text-button" data-go="contributions">Tout voir →</button>
+            </div>
+            <div class="contribution-list" id="dashboardContributions"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <div><span class="eyebrow">CAPACITÉ</span><h2>Lacunes prioritaires</h2></div>
+            </div>
+            <div id="gapList" class="stack-list"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-head">
+              <div><span class="eyebrow">CONFIANCE</span><h2>Posture de preuve</h2></div>
+            </div>
+            <div id="proofPosture"></div>
+          </section>
+          <section class="panel span-2">
+            <div class="panel-head">
+              <div><span class="eyebrow">JOURNAL</span><h2>Activité vérifiable</h2></div>
+            </div>
+            <div id="activityFeed" class="timeline"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view" id="view-mission">
+        <div class="page-title"><span class="eyebrow accent">ÉTAPE 01</span><h1>Constitution de la mission</h1><p>Figer l’objectif, l’autorité et les conditions avant l’exécution.</p></div>
+        <form class="panel form-grid" id="missionForm">
+          <label class="span-2">Titre de la mission<input name="title" required></label>
+          <label class="span-2">Résultat observable<textarea name="outcome" rows="3" required></textarea></label>
+          <label>Bénéficiaires<input name="beneficiaries"></label>
+          <label>Responsable humain<input name="owner" required></label>
+          <label>Nature de la participation<select name="participation"><option value="bénévole">Bénévole</option><option value="éducative">Éducative</option><option value="rémunérée">Rémunérée</option><option value="hybride">Hybride</option></select></label>
+          <label>Échéance<input name="deadline" type="date"></label>
+          <label class="span-2">Critères de succès <small>Un critère par ligne</small><textarea name="successCriteria" rows="4"></textarea></label>
+          <label class="span-2">Conditions d’arrêt <small>Une condition par ligne</small><textarea name="stopConditions" rows="4"></textarea></label>
+          <div class="form-actions span-2"><button class="button primary" type="submit">Enregistrer la constitution</button></div>
+        </form>
+      </section>
+
+      <section class="view" id="view-capabilities">
+        <div class="page-title with-action"><div><span class="eyebrow accent">ÉTAPE 02</span><h1>Carte des capacités</h1><p>Comparer les capacités nécessaires et disponibles sans produire de score humain universel.</p></div><button class="button primary" id="addCapability">+ Ajouter</button></div>
+        <div class="panel"><div class="capability-grid" id="capabilityGrid"></div></div>
+      </section>
+
+      <section class="view" id="view-team">
+        <div class="page-title with-action"><div><span class="eyebrow accent">ÉTAPE 03</span><h1>Équipe consentante</h1><p>La visibilité et la participation restent contrôlées par chaque personne.</p></div><button class="button primary" id="addPerson">+ Inviter</button></div>
+        <div class="people-grid" id="peopleGrid"></div>
+      </section>
+
+      <section class="view" id="view-contributions">
+        <div class="page-title with-action"><div><span class="eyebrow accent">ÉTAPE 04</span><h1>Portefeuille de contributions</h1><p>Chaque activité relie mission, personne, capacité, rôle humain, IA et preuve attendue.</p></div><button class="button primary" id="addContribution">+ Contribution</button></div>
+        <div class="kanban" id="contributionBoard"></div>
+      </section>
+
+      <section class="view" id="view-proof">
+        <div class="page-title"><span class="eyebrow accent">ÉTAPE 05</span><h1>Preuves et validations</h1><p>Une preuve démontre; seule une décision humaine identifiée valide.</p></div>
+        <div class="panel">
+          <div class="claim-legend">
+            <span><i class="level declared"></i>Déclarée</span><span><i class="level observed"></i>Observée</span><span><i class="level demonstrated"></i>Démontrée</span><span><i class="level validated"></i>Validée</span><span><i class="level endorsed"></i>Endossée</span>
+          </div>
+          <div id="proofList" class="proof-list"></div>
+        </div>
+      </section>
+
+      <section class="view" id="view-outcomes">
+        <div class="page-title"><span class="eyebrow accent">ÉTAPE 06</span><h1>Bilan de mission</h1><p>Mesurer le résultat, la confiance et les capacités démontrées.</p></div>
+        <div class="metrics" id="outcomeMetrics"></div>
+        <div class="dashboard-grid">
+          <section class="panel span-2"><div class="panel-head"><div><span class="eyebrow">CRITÈRES</span><h2>Résultats observables</h2></div></div><div id="criteriaList" class="check-list"></div></section>
+          <section class="panel"><div class="panel-head"><div><span class="eyebrow">ATTESTATIONS</span><h2>Reconnaissance contextuelle</h2></div></div><div id="credentialList" class="stack-list"></div></section>
+        </div>
+      </section>
+
+      <section class="view" id="view-goalos">
+        <div class="page-title"><span class="eyebrow accent">PONT D’INTEROPÉRABILITÉ</span><h1>UNI × GoalOS</h1><p>Transformer la mission et ses preuves en état institutionnel portable.</p></div>
+        <div class="integration-hero panel">
+          <div class="integration-logos"><span>UNI</span><i>↔</i><span>Ω</span></div>
+          <div><h2>GoalOS Bridge v0.1</h2><p>Export déterministe des missions, capacités, contributions, preuves, validations et conditions d’arrêt. Aucun secret ni profil privé n’est transmis automatiquement.</p></div>
+          <button class="button primary" id="goalosExport">Télécharger le paquet GoalOS</button>
+        </div>
+        <div class="dashboard-grid">
+          <section class="panel span-2"><div class="panel-head"><div><span class="eyebrow">APERÇU</span><h2>Paquet d’intégration</h2></div></div><pre id="goalosPreview"></pre></section>
+          <section class="panel"><div class="panel-head"><div><span class="eyebrow">GARDE-FOUS</span><h2>Contrôle humain</h2></div></div><ul class="guardrails"><li>Aucune exécution externe automatique</li><li>Aucun profil privé exporté</li><li>Preuve et validation restent distinctes</li><li>Conditions d’arrêt préservées</li><li>Export déclenché par un humain</li></ul></section>
+        </div>
+      </section>
+    </main>
+
+    <dialog id="modal">
+      <form method="dialog" class="modal-shell" id="modalForm">
+        <div class="modal-head"><div><span class="eyebrow" id="modalEyebrow"></span><h2 id="modalTitle"></h2></div><button class="icon-button" value="cancel" aria-label="Fermer">×</button></div>
+        <div id="modalBody"></div>
+        <div class="form-actions"><button class="quiet" value="cancel">Annuler</button><button class="button primary" id="modalSubmit" value="default">Enregistrer</button></div>
+      </form>
+    </dialog>
+    <div class="toast" id="toast" hidden><strong></strong><span></span></div>
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
