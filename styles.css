@@ -260,6 +260,7 @@ button:disabled { cursor: not-allowed; filter: grayscale(.7); opacity: .45; }
 .auth-card { display: grid; gap: 16px; }.auth-card h2 { margin: 0; }.auth-card p, .auth-card > small { color: var(--muted); line-height: 1.55; font-size: 11px; }
 .access-principles { height: 100%; }.session-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }.session-bar strong { display: block; margin-top: 5px; }
 .protected-workspaces { margin-top: 16px; }.workspace-access-list { display: grid; gap: 8px; }.workspace-access-list article { display: flex; align-items: center; justify-content: space-between; padding: 13px; border: 1px solid var(--line); border-radius: 9px; }.workspace-access-list b, .workspace-access-list small { display: block; }.workspace-access-list small { margin-top: 4px; color: var(--muted); }
+.collaboration-tools { margin-top: 16px; }.invite-output { padding: 13px; border: 1px solid rgba(86,224,194,.2); border-radius: 9px; background: rgba(86,224,194,.04); }.invite-output span, .invite-output code { display: block; }.invite-output span { margin-bottom: 7px; color: var(--amber); font-size: 9px; text-transform: uppercase; letter-spacing: .1em; }.invite-output code { overflow-wrap: anywhere; color: var(--teal); font-size: 11px; }
 @media (max-width: 1100px) {
   .metrics { grid-template-columns: repeat(2, 1fr); }
   .dashboard-grid { grid-template-columns: 1fr 1fr; }

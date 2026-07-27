@@ -4,6 +4,7 @@ const SESSION_KEY = "uni-protected-session-v0.1";
 const $ = (selector) => document.querySelector(selector);
 const runtime = createRuntime();
 let user = null;
+let workspacesCache = [];
 
 function toast(title, message) {
   const node = $("#toast");
@@ -72,8 +73,10 @@ async function loadWorkspaces() {
   const list = $("#workspaceAccessList");
   list.innerHTML = `<p class="lead">Chargement…</p>`;
   try {
-    const workspaces = await runtime.listWorkspaces();
-    list.innerHTML = workspaces.map((workspace) => `<article><div><b>${escapeHtml(workspace.name)}</b><small>${escapeHtml(workspace.data_classification)}</small></div><span class="status validated">autorisé</span></article>`).join("") || `<p class="lead">Aucun espace autorisé.</p>`;
+    workspacesCache = await runtime.listWorkspaces();
+    list.innerHTML = workspacesCache.map((workspace) => `<article><div><b>${escapeHtml(workspace.name)}</b><small>${escapeHtml(workspace.data_classification)}</small></div><span class="status validated">autorisé</span></article>`).join("") || `<p class="lead">Aucun espace autorisé.</p>`;
+    $("#inviteWorkspace").innerHTML = workspacesCache.map((workspace) => `<option value="${escapeHtml(workspace.id)}">${escapeHtml(workspace.name)}</option>`).join("");
+    $("#createInviteForm").querySelector("button[type=submit]").disabled = workspacesCache.length === 0;
   } catch (error) {
     list.innerHTML = `<p class="lead">${escapeHtml(error.message)}</p>`;
   }
@@ -114,6 +117,50 @@ $("#workspaceForm").addEventListener("submit", async (event) => {
     await loadWorkspaces();
   } catch (error) {
     toast("Création impossible", error.message);
+  }
+});
+
+$("#redeemInviteForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  if (data.get("joinConsent") !== "on") return;
+  try {
+    await runtime.redeemInvite(String(data.get("inviteCode")).trim());
+    event.currentTarget.reset();
+    toast("Invitation acceptée", "Votre adhésion consentie est maintenant active.");
+    await loadWorkspaces();
+  } catch (error) {
+    toast("Invitation refusée", error.message);
+  }
+});
+
+$("#createInviteForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  const data = new FormData(event.currentTarget);
+  try {
+    const result = await runtime.createInvite(
+      data.get("workspaceId"),
+      data.get("role"),
+      Number(data.get("lifetimeHours")),
+      Number(data.get("allowedUses"))
+    );
+    const invitation = Array.isArray(result) ? result[0] : result;
+    $("#inviteCodeOutput").textContent = invitation.invite_code;
+    $("#inviteOutput").hidden = false;
+    toast("Invitation créée", "Copiez le code maintenant : il n’est pas conservé en clair.");
+  } catch (error) {
+    toast("Invitation impossible", error.message);
+  }
+});
+
+$("#copyInvite").addEventListener("click", async () => {
+  const code = $("#inviteCodeOutput").textContent;
+  if (!code) return;
+  try {
+    await navigator.clipboard.writeText(code);
+    toast("Code copié", "Partagez-le par un canal approprié.");
+  } catch {
+    toast("Copie manuelle requise", "Sélectionnez le code affiché.");
   }
 });
 

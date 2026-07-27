@@ -67,6 +67,8 @@ Le dépôt contient maintenant un MVP fonctionnel de la boucle de mission :
 - cinq rôles séparés, politiques RLS et chaîne d'audit calculée côté serveur.
 - Centre d'accès prêt pour liens magiques et sessions éphémères;
 - création de profils et d'espaces protégés soumise à RLS.
+- invitations temporaires par rôle, expiration et nombre d'utilisations;
+- codes stockés uniquement sous forme d'empreinte SHA-256.
 
 ### Lancer localement
 
@@ -106,6 +108,8 @@ Le dossier [`supabase`](supabase) contient la première migration du backend mul
 La migration sépare les rôles `owner`, `facilitator`, `contributor`, `validator` et `observer`. Les preuves, validations et événements d'audit sont append-only. La chaîne d'audit est calculée par PostgreSQL, pas fournie par le navigateur.
 
 Le [`Centre d'accès`](account.html) reste verrouillé tant que le runtime n'est pas configuré. Lorsqu'il est actif, le jeton est conservé dans `sessionStorage`, retiré immédiatement de l'URL et perdu à la fermeture de la session du navigateur.
+
+La migration `0002_workspace_invites.sql` ajoute des invitations bornées. Le code en clair est retourné une seule fois; PostgreSQL ne conserve que son empreinte. Un facilitateur ne peut pas inviter un autre facilitateur, et le rôle d'une adhésion existante n'est jamais rétrogradé par un code.
 
 Le compilateur local n'appelle aucun modèle externe. Il propose des contributions à partir des écarts de capacités déclarés, laisse le responsable non assigné et exige une décision humaine.
 

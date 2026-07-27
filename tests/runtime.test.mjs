@@ -84,3 +84,30 @@ test("les appels de données exigent et transmettent la session", async () => {
     globalThis.fetch = originalFetch;
   }
 });
+
+test("la création et l’utilisation d’invitations passent par les RPC protégées", async () => {
+  const calls = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (url, options) => {
+    calls.push({ url, options });
+    return new Response(JSON.stringify([]), { status: 200, headers: { "content-type": "application/json" } });
+  };
+  try {
+    const runtime = createRuntime({
+      mode: "protected",
+      configured: true,
+      provider: "supabase",
+      url: "https://uni-project.supabase.co",
+      anonKey: "public-anon-key-longer-than-twenty-characters"
+    });
+    runtime.setSession("temporary-access-token");
+    await runtime.createInvite("workspace-1", "contributor", 24, 1);
+    await runtime.redeemInvite("temporary-code");
+    assert.match(calls[0].url, /\/rest\/v1\/rpc\/uni_create_invite$/);
+    assert.match(calls[1].url, /\/rest\/v1\/rpc\/uni_redeem_invite$/);
+    assert.equal(JSON.parse(calls[0].options.body).invited_role, "contributor");
+    assert.equal(JSON.parse(calls[1].options.body).invite_code, "temporary-code");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+});

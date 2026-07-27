@@ -1,4 +1,4 @@
-const CACHE = "uni-mission-lab-v0.8";
+const CACHE = "uni-mission-lab-v0.9";
 const SHELL = [
   "./",
   "./index.html",

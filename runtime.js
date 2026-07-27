@@ -108,6 +108,26 @@ export class UNIRuntime {
       body: JSON.stringify(workspace)
     });
   }
+
+  callRpc(name, parameters) {
+    return this.request(`rpc/${name}`, {
+      method: "POST",
+      body: JSON.stringify(parameters)
+    });
+  }
+
+  createInvite(workspaceId, role, lifetimeHours = 168, allowedUses = 1) {
+    return this.callRpc("uni_create_invite", {
+      target_workspace: workspaceId,
+      invited_role: role,
+      lifetime_hours: lifetimeHours,
+      allowed_uses: allowedUses
+    });
+  }
+
+  redeemInvite(code) {
+    return this.callRpc("uni_redeem_invite", { invite_code: code });
+  }
 }
 
 export function createRuntime(configuration) {

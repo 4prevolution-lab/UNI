@@ -49,6 +49,23 @@
             <button class="button primary" type="submit">Créer l’espace</button>
           </form>
         </div>
+        <div class="auth-grid collaboration-tools">
+          <form class="panel auth-card" id="redeemInviteForm">
+            <span class="eyebrow">REJOINDRE</span><h2>Utiliser une invitation</h2>
+            <p>Le code est vérifié par empreinte. En le présentant, vous confirmez votre adhésion volontaire à l’espace et au rôle annoncé.</p>
+            <label>Code temporaire<input name="inviteCode" required minlength="32" autocomplete="off" spellcheck="false"></label>
+            <label class="consent-line"><input name="joinConsent" type="checkbox" required> Je consens à rejoindre cet espace avec le rôle associé.</label>
+            <button class="button secondary" type="submit">Vérifier et rejoindre</button>
+          </form>
+          <form class="panel auth-card" id="createInviteForm">
+            <span class="eyebrow">INVITER</span><h2>Créer un accès borné</h2>
+            <label>Espace<select name="workspaceId" id="inviteWorkspace" required></select></label>
+            <label>Rôle<select name="role"><option value="contributor">Contributor</option><option value="validator">Validator</option><option value="observer">Observer</option><option value="facilitator">Facilitator</option></select></label>
+            <div class="form-grid compact"><label>Durée<select name="lifetimeHours"><option value="24">24 heures</option><option value="168" selected>7 jours</option><option value="720">30 jours</option></select></label><label>Utilisations<input name="allowedUses" type="number" min="1" max="20" value="1"></label></div>
+            <button class="button secondary" type="submit">Générer le code</button>
+            <div class="invite-output" id="inviteOutput" hidden><span>Affiché une seule fois</span><code id="inviteCodeOutput"></code><button class="text-button" type="button" id="copyInvite">Copier</button></div>
+          </form>
+        </div>
         <section class="panel protected-workspaces"><div class="panel-head"><div><span class="eyebrow">RLS ACTIF</span><h2>Espaces autorisés</h2></div><button class="text-button" id="refreshWorkspaces">Actualiser</button></div><div class="workspace-access-list" id="workspaceAccessList"></div></section>
       </section>
       <footer class="verifier-footer"><a href="./">← Retour au Mission Lab</a><span>Jeton en session · RLS obligatoire</span></footer>
