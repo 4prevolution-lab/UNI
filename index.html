@@ -140,7 +140,7 @@
       </section>
 
       <section class="view" id="view-outcomes">
-        <div class="page-title"><span class="eyebrow accent">ÉTAPE 06</span><h1>Bilan de mission</h1><p>Mesurer le résultat, la confiance et les capacités démontrées.</p></div>
+        <div class="page-title with-action"><div><span class="eyebrow accent">ÉTAPE 06</span><h1>Bilan de mission</h1><p>Mesurer le résultat, la confiance et les capacités démontrées.</p></div><div class="button-row"><button class="quiet" id="proofBundleExport">ProofBundle</button><button class="button primary" id="reportExport">Rapport imprimable</button></div></div>
         <div class="metrics" id="outcomeMetrics"></div>
         <div class="dashboard-grid">
           <section class="panel span-2"><div class="panel-head"><div><span class="eyebrow">CRITÈRES</span><h2>Résultats observables</h2></div></div><div id="criteriaList" class="check-list"></div></section>
@@ -157,7 +157,7 @@
         </div>
         <div class="dashboard-grid">
           <section class="panel span-2"><div class="panel-head"><div><span class="eyebrow">APERÇU</span><h2>Paquet d’intégration</h2></div></div><pre id="goalosPreview"></pre></section>
-          <section class="panel"><div class="panel-head"><div><span class="eyebrow">GARDE-FOUS</span><h2>Contrôle humain</h2></div></div><ul class="guardrails"><li>Aucune exécution externe automatique</li><li>Aucun profil privé exporté</li><li>Preuve et validation restent distinctes</li><li>Conditions d’arrêt préservées</li><li>Export déclenché par un humain</li></ul></section>
+          <section class="panel"><div class="panel-head"><div><span class="eyebrow">GARDE-FOUS</span><h2>Contrôle humain</h2></div></div><ul class="guardrails"><li>Aucune exécution externe automatique</li><li>Aucun profil privé exporté</li><li>Preuve et validation restent distinctes</li><li>Conditions d’arrêt préservées</li><li>Export déclenché par un humain</li></ul><div class="integrity-card"><span class="eyebrow">INTÉGRITÉ DU JOURNAL</span><strong id="integrityStatus">Calcul disponible</strong><small>Chaîne SHA‑256 calculée lors de l’export ProofBundle.</small></div></section>
         </div>
       </section>
     </main>

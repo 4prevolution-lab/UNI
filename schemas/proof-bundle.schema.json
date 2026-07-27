@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uni.4prevolution.org/schemas/proof-bundle/v0.1",
+  "title": "UNI Mission ProofBundle",
+  "type": "object",
+  "required": ["payload", "checksum", "algorithm"],
+  "properties": {
+    "algorithm": { "const": "SHA-256" },
+    "checksum": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "payload": {
+      "type": "object",
+      "required": ["schema", "createdAt", "mission", "capabilities", "contributions", "ledger", "ledgerHead"],
+      "properties": {
+        "schema": { "const": "https://uni.4prevolution.org/schemas/proof-bundle/v0.1" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "mission": { "type": "object" },
+        "capabilities": { "type": "array" },
+        "contributions": { "type": "array" },
+        "ledger": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["event", "previousHash", "hash"],
+            "properties": {
+              "event": { "type": "object" },
+              "previousHash": { "type": "string" },
+              "hash": { "type": "string", "pattern": "^[a-f0-9]{64}$" }
+            }
+          }
+        },
+        "ledgerHead": { "type": "string" }
+      }
+    }
+  }
+}

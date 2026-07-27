@@ -171,6 +171,54 @@ export function addActivity(state, type, text, actor = "SOLOS") {
   state.activity.unshift({ id: uid("event"), type, text, actor, at: now() });
 }
 
+export function canonicalize(value) {
+  if (Array.isArray(value)) return `[${value.map(canonicalize).join(",")}]`;
+  if (value && typeof value === "object") {
+    return `{${Object.keys(value).sort().map((key) => `${JSON.stringify(key)}:${canonicalize(value[key])}`).join(",")}}`;
+  }
+  return JSON.stringify(value);
+}
+
+export async function sha256Hex(value) {
+  const bytes = new TextEncoder().encode(typeof value === "string" ? value : canonicalize(value));
+  const digest = await globalThis.crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)].map((byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+export async function buildProofBundle(state) {
+  let previousHash = "GENESIS";
+  const ledger = [];
+  for (const event of [...(state.activity || [])].reverse()) {
+    const entry = { event, previousHash };
+    const hash = await sha256Hex(entry);
+    ledger.push({ ...entry, hash });
+    previousHash = hash;
+  }
+  const payload = {
+    schema: "https://uni.4prevolution.org/schemas/proof-bundle/v0.1",
+    createdAt: now(),
+    mission: state.mission,
+    capabilities: state.capabilities,
+    contributions: state.contributions,
+    ledger,
+    ledgerHead: previousHash
+  };
+  return { payload, checksum: await sha256Hex(payload), algorithm: "SHA-256" };
+}
+
+export async function verifyProofBundle(bundle) {
+  if (!bundle?.payload || !bundle?.checksum || bundle.algorithm !== "SHA-256") return false;
+  if (await sha256Hex(bundle.payload) !== bundle.checksum) return false;
+  let previousHash = "GENESIS";
+  for (const entry of bundle.payload.ledger || []) {
+    if (entry.previousHash !== previousHash) return false;
+    const expected = await sha256Hex({ event: entry.event, previousHash: entry.previousHash });
+    if (entry.hash !== expected) return false;
+    previousHash = entry.hash;
+  }
+  return previousHash === bundle.payload.ledgerHead;
+}
+
 export function buildGoalOSExport(state) {
   const metrics = missionMetrics(state);
   return {

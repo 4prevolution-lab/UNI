@@ -1,6 +1,7 @@
 import {
   addActivity,
   buildGoalOSExport,
+  buildProofBundle,
   capabilityGaps,
   claimLevel,
   compileContributionSuggestions,
@@ -62,13 +63,28 @@ function formatDate(value, options = { day: "numeric", month: "short" }) {
   return new Intl.DateTimeFormat("fr-CA", options).format(new Date(value));
 }
 
-function download(name, data) {
-  const blob = new Blob([typeof data === "string" ? data : JSON.stringify(data, null, 2)], { type: "application/json" });
+function download(name, data, type = "application/json") {
+  const blob = new Blob([typeof data === "string" ? data : JSON.stringify(data, null, 2)], { type });
   const link = document.createElement("a");
   link.href = URL.createObjectURL(blob);
   link.download = name;
   link.click();
   setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+}
+
+function buildMissionReport() {
+  const metrics = missionMetrics(state);
+  const rows = state.contributions.map((item) => `<tr><td>${escapeHtml(item.title)}</td><td>${escapeHtml(personName(item.ownerId))}</td><td>${escapeHtml(item.status)}</td><td>${escapeHtml(item.evidence?.reference || "—")}</td><td>${escapeHtml(item.validation?.decision || "—")}</td></tr>`).join("");
+  return `<!doctype html><html lang="fr"><head><meta charset="utf-8"><title>Rapport — ${escapeHtml(state.mission.title)}</title><style>
+  body{font:14px/1.55 system-ui,sans-serif;color:#172033;max-width:1000px;margin:48px auto;padding:0 28px}header{border-bottom:3px solid #172033;margin-bottom:32px;padding-bottom:24px}h1{font-size:34px;line-height:1.1}h2{margin-top:32px}.meta{display:flex;gap:20px;flex-wrap:wrap;color:#566077}.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.metric{border:1px solid #d8dde7;border-radius:10px;padding:16px}.metric b{display:block;font-size:24px}table{width:100%;border-collapse:collapse}th,td{padding:10px;border-bottom:1px solid #d8dde7;text-align:left;font-size:12px}ul{padding-left:20px}.notice{padding:14px;border-left:3px solid #1aa98d;background:#f1faf8}@media print{body{margin:0}.no-print{display:none}}</style></head><body>
+  <header><small>UNI MISSION LAB · RAPPORT V0.1</small><h1>${escapeHtml(state.mission.title)}</h1><p>${escapeHtml(state.mission.outcome)}</p><div class="meta"><span>Responsable : ${escapeHtml(state.mission.owner)}</span><span>Échéance : ${escapeHtml(formatDate(state.mission.deadline,{day:"numeric",month:"long",year:"numeric"}))}</span><span>Participation : ${escapeHtml(state.mission.participation)}</span></div></header>
+  <section class="metrics"><div class="metric"><b>${metrics.total}</b>Contributions</div><div class="metric"><b>${metrics.evidenceRate}%</b>Preuves</div><div class="metric"><b>${metrics.validationRate}%</b>Validations</div><div class="metric"><b>${metrics.consentRate}%</b>Consentement</div></section>
+  <h2>Critères de succès</h2><ul>${state.mission.successCriteria.map((item,index)=>`<li>${state.mission.completedCriteria?.includes(index)?"✓":"○"} ${escapeHtml(item)}</li>`).join("")}</ul>
+  <h2>Contributions</h2><table><thead><tr><th>Contribution</th><th>Responsable</th><th>Statut</th><th>Preuve</th><th>Validation</th></tr></thead><tbody>${rows}</tbody></table>
+  <h2>Conditions d’arrêt</h2><ul>${state.mission.stopConditions.map((item)=>`<li>${escapeHtml(item)}</li>`).join("")}</ul>
+  <p class="notice">Ce rapport distingue les activités déclarées, les preuves produites et les validations humaines. Il ne constitue pas une autorité professionnelle ou réglementaire.</p>
+  <p><small>Généré le ${escapeHtml(formatDate(now(),{dateStyle:"long",timeStyle:"short"}))} · UNI Mission Lab ${escapeHtml(state.version)}</small></p>
+  <button class="no-print" onclick="window.print()">Imprimer / Enregistrer en PDF</button></body></html>`;
 }
 
 function personName(id) {
@@ -388,6 +404,28 @@ $("#goalosExport").addEventListener("click", () => {
   download(`uni-goalos-${state.mission.id}.json`, buildGoalOSExport(state));
   save("Paquet GoalOS exporté.");
   render();
+});
+$("#proofBundleExport").addEventListener("click", async () => {
+  const button = $("#proofBundleExport");
+  button.disabled = true;
+  button.textContent = "Calcul SHA‑256…";
+  try {
+    const bundle = await buildProofBundle(state);
+    state.goalos.lastProofBundle = { checksum: bundle.checksum, createdAt: bundle.payload.createdAt };
+    addActivity(state, "proofbundle.exported", `ProofBundle généré : ${bundle.checksum.slice(0, 12)}…`);
+    download(`uni-proofbundle-${state.mission.id}.json`, bundle);
+    $("#integrityStatus").textContent = `Vérifié · ${bundle.checksum.slice(0, 12)}…`;
+    save("ProofBundle vérifiable exporté.");
+  } finally {
+    button.disabled = false;
+    button.textContent = "ProofBundle";
+  }
+});
+$("#reportExport").addEventListener("click", () => {
+  download(`uni-rapport-${state.mission.id}.html`, buildMissionReport(), "text/html;charset=utf-8");
+  addActivity(state, "report.exported", "Le rapport imprimable de mission a été généré.");
+  save("Rapport imprimable généré.");
+  renderDashboard();
 });
 $("#importButton").addEventListener("click", () => $("#importInput").click());
 $("#importInput").addEventListener("change", async (event) => {

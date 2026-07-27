@@ -2,12 +2,15 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   buildGoalOSExport,
+  buildProofBundle,
+  canonicalize,
   capabilityGaps,
   claimLevel,
   compileContributionSuggestions,
   createDemoState,
   missionMetrics,
-  normalizeState
+  normalizeState,
+  verifyProofBundle
 } from "../core.js";
 
 test("les métriques distinguent preuve et validation", () => {
@@ -53,4 +56,16 @@ test("le compilateur local cible les lacunes sans attribuer de responsable", () 
   assert.equal(suggestions[0].status, "planned");
   assert.match(suggestions[0].aiUse, /Assistant local/);
   assert.ok(suggestions.every((suggestion) => suggestion.capabilityIds.length === 1));
+});
+
+test("la sérialisation canonique ne dépend pas de l’ordre des clés", () => {
+  assert.equal(canonicalize({ b: 2, a: 1 }), canonicalize({ a: 1, b: 2 }));
+});
+
+test("un ProofBundle intact est vérifiable et une altération est détectée", async () => {
+  const bundle = await buildProofBundle(createDemoState());
+  assert.equal(bundle.algorithm, "SHA-256");
+  assert.equal(await verifyProofBundle(bundle), true);
+  bundle.payload.mission.title = "Titre falsifié";
+  assert.equal(await verifyProofBundle(bundle), false);
 });

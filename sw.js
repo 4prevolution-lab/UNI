@@ -1,4 +1,4 @@
-const CACHE = "uni-mission-lab-v0.2";
+const CACHE = "uni-mission-lab-v0.3";
 const SHELL = [
   "./",
   "./index.html",
@@ -6,7 +6,10 @@ const SHELL = [
   "./app.js",
   "./core.js",
   "./app.webmanifest",
-  "./assets/icon.svg"
+  "./assets/icon.svg",
+  "./schemas/mission-lab-state.schema.json",
+  "./schemas/goalos-bridge.schema.json",
+  "./schemas/proof-bundle.schema.json"
 ];
 
 self.addEventListener("install", (event) => {
