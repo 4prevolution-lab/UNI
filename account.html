@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1020">
+    <title>Centre d’accès — UNI</title>
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="verifier-page">
+    <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+    <main class="access-shell">
+      <a class="brand verifier-brand" href="./"><span class="brand-mark">U</span><span><strong>UNI</strong><small>PROTECTED ACCESS</small></span></a>
+      <section class="access-heading">
+        <div><span class="eyebrow accent">IDENTITÉ ET AUTORITÉ</span><h1>Centre d’accès</h1><p>Une session courte, des rôles explicites et des données protégées au niveau de chaque ligne.</p></div>
+        <span class="runtime-pill" id="runtimePill">Vérification…</span>
+      </section>
+
+      <section class="panel access-locked" id="runtimeLocked" hidden>
+        <span class="lock-symbol">◇</span>
+        <div><span class="eyebrow">RUNTIME NON CONFIGURÉ</span><h2>Le mode protégé n’est pas encore activé.</h2><p>Le Mission Lab public continue de fonctionner localement. Pour ouvrir les comptes et espaces partagés, configurez d’abord un projet Supabase contrôlé par UNI et appliquez les politiques RLS.</p></div>
+        <a class="button secondary link-button" href="https://github.com/4prevolution-lab/UNI/tree/main/supabase" rel="noopener">Voir la configuration</a>
+      </section>
+
+      <section class="auth-grid" id="authEntry" hidden>
+        <form class="panel auth-card" id="magicForm">
+          <span class="eyebrow accent">LIEN MAGIQUE</span><h2>Recevoir un accès temporaire</h2><p>Aucun mot de passe n’est stocké par UNI. Le lien sera envoyé par le fournisseur d’identité configuré.</p>
+          <label>Adresse courriel<input name="email" type="email" autocomplete="email" required placeholder="vous@organisation.org"></label>
+          <button class="button primary" type="submit">Envoyer le lien sécurisé</button>
+          <small>Le jeton de retour sera conservé dans cette session seulement.</small>
+        </form>
+        <section class="panel access-principles"><span class="eyebrow">PRINCIPES</span><ul class="guardrails"><li>Consentement avant adhésion</li><li>Accès limité au rôle attribué</li><li>Profils privés non exposés</li><li>Preuves et validations append-only</li><li>Déconnexion sans conservation durable du jeton</li></ul></section>
+      </section>
+
+      <section id="sessionArea" hidden>
+        <div class="session-bar panel"><div><span class="eyebrow">SESSION ACTIVE</span><strong id="sessionEmail"></strong></div><button class="quiet" id="signOutButton">Se déconnecter</button></div>
+        <div class="auth-grid">
+          <form class="panel auth-card" id="profileForm">
+            <span class="eyebrow">PROFIL MINIMAL</span><h2>Votre identité de mission</h2>
+            <label>Nom affiché<input name="displayName" required maxlength="120"></label>
+            <label>Langue<select name="locale"><option value="fr-CA">Français (Canada)</option><option value="en-CA">English (Canada)</option></select></label>
+            <button class="button secondary" type="submit">Enregistrer le profil</button>
+          </form>
+          <form class="panel auth-card" id="workspaceForm">
+            <span class="eyebrow">NOUVEL ESPACE</span><h2>Créer un espace protégé</h2>
+            <label>Nom de l’espace<input name="name" required maxlength="160"></label>
+            <label>Classification<select name="classification"><option value="internal">Interne</option><option value="public">Publique</option><option value="confidential">Confidentielle</option></select></label>
+            <button class="button primary" type="submit">Créer l’espace</button>
+          </form>
+        </div>
+        <section class="panel protected-workspaces"><div class="panel-head"><div><span class="eyebrow">RLS ACTIF</span><h2>Espaces autorisés</h2></div><button class="text-button" id="refreshWorkspaces">Actualiser</button></div><div class="workspace-access-list" id="workspaceAccessList"></div></section>
+      </section>
+      <footer class="verifier-footer"><a href="./">← Retour au Mission Lab</a><span>Jeton en session · RLS obligatoire</span></footer>
+    </main>
+    <div class="toast" id="toast" hidden><strong></strong><span></span></div>
+    <script src="runtime-config.public.js"></script>
+    <script type="module" src="account.js"></script>
+  </body>
+</html>

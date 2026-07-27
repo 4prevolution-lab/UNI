@@ -25,6 +25,45 @@ export class UNIRuntime {
     this.accessToken = accessToken || null;
   }
 
+  async authRequest(path, options = {}) {
+    if (!this.configuration.configured) throw new Error("Runtime protégé non configuré.");
+    const response = await fetch(`${this.configuration.url}/auth/v1/${String(path).replace(/^\/+/, "")}`, {
+      ...options,
+      headers: {
+        apikey: this.configuration.anonKey,
+        "Content-Type": "application/json",
+        ...(this.accessToken ? { Authorization: `Bearer ${this.accessToken}` } : {}),
+        ...(options.headers || {})
+      }
+    });
+    if (!response.ok) {
+      const detail = await response.text();
+      throw new Error(`Authentification UNI ${response.status}: ${detail.slice(0, 300)}`);
+    }
+    if (response.status === 204) return null;
+    return response.json();
+  }
+
+  sendMagicLink(email, redirectTo) {
+    return this.authRequest(`otp?redirect_to=${encodeURIComponent(redirectTo)}`, {
+      method: "POST",
+      body: JSON.stringify({
+        email,
+        create_user: true
+      })
+    });
+  }
+
+  getUser() {
+    if (!this.accessToken) throw new Error("Session authentifiée requise.");
+    return this.authRequest("user");
+  }
+
+  signOut() {
+    if (!this.accessToken) return Promise.resolve(null);
+    return this.authRequest("logout", { method: "POST" }).finally(() => this.setSession(null));
+  }
+
   async request(path, options = {}) {
     if (!this.configuration.configured) throw new Error("Runtime protégé non configuré.");
     if (!this.accessToken) throw new Error("Session authentifiée requise.");
@@ -53,6 +92,21 @@ export class UNIRuntime {
   listMissions(workspaceId) {
     const id = encodeURIComponent(workspaceId);
     return this.request(`missions?workspace_id=eq.${id}&select=*&order=updated_at.desc`);
+  }
+
+  saveProfile(profile) {
+    return this.request("profiles?on_conflict=id", {
+      method: "POST",
+      headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+      body: JSON.stringify(profile)
+    });
+  }
+
+  createWorkspace(workspace) {
+    return this.request("workspaces", {
+      method: "POST",
+      body: JSON.stringify(workspace)
+    });
   }
 }
 

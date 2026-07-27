@@ -65,6 +65,8 @@ Le dépôt contient maintenant un MVP fonctionnel de la boucle de mission :
 - duplication de modèles sans personnes, contributions, preuves ou historique.
 - fondation Supabase/PostgreSQL pour un runtime protégé multiutilisateur;
 - cinq rôles séparés, politiques RLS et chaîne d'audit calculée côté serveur.
+- Centre d'accès prêt pour liens magiques et sessions éphémères;
+- création de profils et d'espaces protégés soumise à RLS.
 
 ### Lancer localement
 
@@ -102,6 +104,8 @@ Le [`Mission Portfolio`](portfolio.html) conserve plusieurs espaces locaux et pe
 Le dossier [`supabase`](supabase) contient la première migration du backend multiutilisateur. Le mode protégé reste désactivé par défaut : l'application continue d'annoncer clairement son stockage local tant qu'aucun projet contrôlé par UNI n'est configuré.
 
 La migration sépare les rôles `owner`, `facilitator`, `contributor`, `validator` et `observer`. Les preuves, validations et événements d'audit sont append-only. La chaîne d'audit est calculée par PostgreSQL, pas fournie par le navigateur.
+
+Le [`Centre d'accès`](account.html) reste verrouillé tant que le runtime n'est pas configuré. Lorsqu'il est actif, le jeton est conservé dans `sessionStorage`, retiré immédiatement de l'URL et perdu à la fermeture de la session du navigateur.
 
 Le compilateur local n'appelle aucun modèle externe. Il propose des contributions à partir des écarts de capacités déclarés, laisse le responsable non assigné et exige une décision humaine.
 
