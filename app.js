@@ -1,6 +1,7 @@
 import {
   addActivity,
   buildGoalOSExport,
+  buildCredentialDrafts,
   buildProofBundle,
   capabilityGaps,
   claimLevel,
@@ -420,6 +421,22 @@ $("#proofBundleExport").addEventListener("click", async () => {
     button.disabled = false;
     button.textContent = "ProofBundle";
   }
+});
+$("#credentialExport").addEventListener("click", () => {
+  const credentials = buildCredentialDrafts(state);
+  if (!credentials.length) {
+    toast("Aucune attestation", "Une contribution doit d’abord être validée par un humain.");
+    return;
+  }
+  download(`uni-attestations-${state.mission.id}.json`, {
+    schema: "https://uni.4prevolution.org/schemas/credential-collection/v0.1",
+    status: "unsignedDraft",
+    notice: "Brouillons Open Badges 3.0 non signés. Une signature d’émetteur est requise avant toute présentation comme justificatif vérifiable.",
+    credentials
+  });
+  addActivity(state, "credentials.exported", `${credentials.length} brouillon${credentials.length > 1 ? "s" : ""} d’attestation exporté${credentials.length > 1 ? "s" : ""}.`);
+  save("Attestations structurées exportées.");
+  renderDashboard();
 });
 $("#reportExport").addEventListener("click", () => {
   download(`uni-rapport-${state.mission.id}.html`, buildMissionReport(), "text/html;charset=utf-8");

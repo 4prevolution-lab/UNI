@@ -2,6 +2,7 @@ import test from "node:test";
 import assert from "node:assert/strict";
 import {
   buildGoalOSExport,
+  buildCredentialDrafts,
   buildProofBundle,
   canonicalize,
   capabilityGaps,
@@ -68,4 +69,12 @@ test("un ProofBundle intact est vérifiable et une altération est détectée", 
   assert.equal(await verifyProofBundle(bundle), true);
   bundle.payload.mission.title = "Titre falsifié";
   assert.equal(await verifyProofBundle(bundle), false);
+});
+
+test("les attestations ne sont créées que pour les validations acceptées et restent non signées", () => {
+  const drafts = buildCredentialDrafts(createDemoState());
+  assert.equal(drafts.length, 1);
+  assert.ok(drafts[0].type.includes("OpenBadgeCredential"));
+  assert.equal(drafts[0].credentialStatus.status, "unsignedDraft");
+  assert.equal("proof" in drafts[0], false);
 });

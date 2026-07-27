@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1020">
+    <title>Vérifier un ProofBundle — UNI</title>
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="verifier-page">
+    <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+    <main class="verifier-shell">
+      <a class="brand verifier-brand" href="./"><span class="brand-mark">U</span><span><strong>UNI</strong><small>PROOFBUNDLE VERIFIER</small></span></a>
+      <section class="verifier-hero">
+        <span class="eyebrow accent">VÉRIFICATION INDÉPENDANTE</span>
+        <h1>Contrôler l’intégrité d’une mission.</h1>
+        <p>Le fichier reste dans votre navigateur. Le vérificateur recalcule la somme SHA‑256 et chaque maillon du journal, sans envoyer le ProofBundle à un serveur.</p>
+      </section>
+      <section class="panel verifier-drop" id="dropZone">
+        <input type="file" id="bundleInput" accept="application/json" hidden>
+        <span class="drop-icon">◆</span>
+        <h2>Déposer un ProofBundle UNI</h2>
+        <p>Glissez le fichier ici ou sélectionnez-le sur votre appareil.</p>
+        <button class="button primary" id="chooseBundle">Choisir un fichier</button>
+      </section>
+      <section class="panel verification-result" id="verificationResult" hidden>
+        <div class="verification-state" id="verificationState"></div>
+        <div class="verification-grid" id="verificationDetails"></div>
+      </section>
+      <footer class="verifier-footer"><a href="./">← Retour au Mission Lab</a><span>Vérification locale · Aucun téléversement</span></footer>
+    </main>
+    <script type="module" src="verify.js"></script>
+  </body>
+</html>

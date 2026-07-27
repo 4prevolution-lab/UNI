@@ -57,6 +57,8 @@ Le dépôt contient maintenant un MVP fonctionnel de la boucle de mission :
 - schémas JSON publics pour l'état UNI et le pont GoalOS.
 - ProofBundles avec empreinte SHA-256 et journal chaîné;
 - rapport de mission autonome, imprimable ou enregistrable en PDF.
+- vérificateur public de ProofBundles fonctionnant entièrement dans le navigateur;
+- brouillons d'attestations structurés selon Open Badges 3.0.
 
 ### Lancer localement
 
@@ -81,6 +83,9 @@ Les tests vérifient notamment que le produit ne confond jamais preuve et valida
 - [`schemas/mission-lab-state.schema.json`](schemas/mission-lab-state.schema.json) — état portable d'une mission;
 - [`schemas/goalos-bridge.schema.json`](schemas/goalos-bridge.schema.json) — paquet UNI vers GoalOS.
 - [`schemas/proof-bundle.schema.json`](schemas/proof-bundle.schema.json) — archive de mission avec somme de contrôle et journal chaîné.
+- [`schemas/credential-collection.schema.json`](schemas/credential-collection.schema.json) — collection de brouillons Open Badges non signés.
+
+Le vérificateur autonome est accessible dans [`verify.html`](verify.html). Les fichiers analysés ne quittent pas le navigateur.
 
 Le compilateur local n'appelle aucun modèle externe. Il propose des contributions à partir des écarts de capacités déclarés, laisse le responsable non assigné et exige une décision humaine.
 

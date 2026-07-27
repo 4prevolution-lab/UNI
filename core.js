@@ -219,6 +219,53 @@ export async function verifyProofBundle(bundle) {
   return previousHash === bundle.payload.ledgerHead;
 }
 
+export function buildCredentialDrafts(state) {
+  return (state.contributions || [])
+    .filter((contribution) => contribution.validation?.decision === "accepted")
+    .map((contribution) => {
+      const person = state.people.find((candidate) => candidate.id === contribution.ownerId);
+      const capabilities = contribution.capabilityIds
+        .map((id) => state.capabilities.find((capability) => capability.id === id)?.name)
+        .filter(Boolean);
+      return {
+        "@context": [
+          "https://www.w3.org/ns/credentials/v2",
+          "https://purl.imsglobal.org/spec/ob/v3p0/context-3.0.3.json"
+        ],
+        id: `urn:uuid:${uid("credential")}`,
+        type: ["VerifiableCredential", "OpenBadgeCredential"],
+        name: `Contribution validée — ${contribution.title}`,
+        issuer: {
+          id: "https://github.com/4prevolution-lab/UNI",
+          type: ["Profile"],
+          name: state.mission.owner
+        },
+        validFrom: contribution.validation.validatedAt || now(),
+        credentialSubject: {
+          id: `urn:uni:person:${person?.id || contribution.ownerId || "unassigned"}`,
+          type: ["AchievementSubject"],
+          achievement: {
+            id: `urn:uni:achievement:${contribution.id}`,
+            type: ["Achievement"],
+            name: contribution.title,
+            description: `Contribution à la mission « ${state.mission.title} » démontrant : ${capabilities.join(", ")}.`,
+            criteria: { narrative: contribution.validation.rationale || "Validation humaine documentée dans UNI." }
+          }
+        },
+        evidence: [{
+          id: contribution.evidence?.reference || `urn:uni:evidence:${contribution.id}`,
+          type: ["Evidence"],
+          narrative: contribution.evidence?.note || "Preuve référencée dans UNI Mission Lab."
+        }],
+        credentialStatus: {
+          type: "UNISigningStatus",
+          status: "unsignedDraft",
+          notice: "Brouillon portable non signé. Une vérification cryptographique d’émetteur reste requise."
+        }
+      };
+    });
+}
+
 export function buildGoalOSExport(state) {
   const metrics = missionMetrics(state);
   return {
