@@ -3,6 +3,7 @@ import {
   buildGoalOSExport,
   capabilityGaps,
   claimLevel,
+  compileContributionSuggestions,
   createDemoState,
   missionMetrics,
   normalizeState,
@@ -365,6 +366,21 @@ $("#menuButton").addEventListener("click", () => $(".sidebar").classList.toggle(
 $("#addCapability").addEventListener("click", () => openCapability());
 $("#addPerson").addEventListener("click", openPerson);
 $("#addContribution").addEventListener("click", () => openContribution());
+$("#compileMission").addEventListener("click", () => {
+  const suggestions = compileContributionSuggestions(state);
+  if (!suggestions.length) {
+    toast("Compilation terminée", "Aucune nouvelle contribution prioritaire détectée.");
+    return;
+  }
+  const existingTitles = new Set(state.contributions.map((item) => item.title));
+  const additions = suggestions
+    .filter((item) => !existingTitles.has(item.title))
+    .map((item) => ({ id: uid("contrib"), ...item }));
+  state.contributions.push(...additions);
+  addActivity(state, "mission.compiled", `${additions.length} contribution${additions.length > 1 ? "s" : ""} proposée${additions.length > 1 ? "s" : ""} par le compilateur local.`);
+  save(`${additions.length} contribution${additions.length > 1 ? "s" : ""} proposée${additions.length > 1 ? "s" : ""}.`);
+  render();
+});
 $("#exportButton").addEventListener("click", () => download(`uni-mission-${state.mission.id}.json`, state));
 $("#goalosExport").addEventListener("click", () => {
   state.goalos.lastExportAt = now();
@@ -393,6 +409,24 @@ $("#resetDemo").addEventListener("click", () => {
   save("Démonstration réinitialisée.");
   render();
 });
+
+let installPrompt;
+window.addEventListener("beforeinstallprompt", (event) => {
+  event.preventDefault();
+  installPrompt = event;
+  $("#installButton").hidden = false;
+});
+$("#installButton").addEventListener("click", async () => {
+  if (!installPrompt) return;
+  installPrompt.prompt();
+  await installPrompt.userChoice;
+  installPrompt = null;
+  $("#installButton").hidden = true;
+});
+window.addEventListener("appinstalled", () => toast("UNI installé", "Mission Lab est maintenant disponible comme application."));
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
+}
 
 const hash = window.location.hash.slice(1);
 if (["dashboard", "mission", "capabilities", "team", "contributions", "proof", "outcomes", "goalos"].includes(hash)) route(hash);

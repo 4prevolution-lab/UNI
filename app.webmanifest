@@ -1,0 +1,19 @@
+{
+  "name": "UNI Mission Lab",
+  "short_name": "UNI",
+  "description": "Coordonner des capacités humaines et artificielles autour de missions vérifiables.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#080d19",
+  "theme_color": "#0b1020",
+  "lang": "fr-CA",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

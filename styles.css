@@ -47,6 +47,7 @@ main { margin-left: var(--sidebar); min-height: 100vh; }
 .save-state { color: #718098; font-size: 11px; }
 .save-state::first-letter { color: var(--teal); }
 .button, .quiet, .text-button, .icon-button { border: 0; color: var(--ink); }
+.button-row { display: flex; gap: 9px; }
 .button { padding: 10px 16px; border-radius: 9px; font-weight: 700; font-size: 13px; }
 .button.primary { color: #06131a; background: linear-gradient(135deg, var(--teal), #71c8f5); box-shadow: 0 8px 24px rgba(86,224,194,.13); }
 .button.secondary { background: var(--surface-2); border: 1px solid var(--line); }

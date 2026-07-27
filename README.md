@@ -52,6 +52,9 @@ Le dépôt contient maintenant un MVP fonctionnel de la boucle de mission :
 - journal d'activité;
 - persistance locale et export JSON;
 - pont d'interopérabilité GoalOS v0.1.
+- compilateur local de contributions fondé sur les lacunes de capacités;
+- installation PWA et fonctionnement hors ligne;
+- schémas JSON publics pour l'état UNI et le pont GoalOS.
 
 ### Lancer localement
 
@@ -70,6 +73,13 @@ npm test
 ```
 
 Les tests vérifient notamment que le produit ne confond jamais preuve et validation, et que le paquet GoalOS conserve les conditions d'arrêt et la posture de preuve.
+
+### Schémas d'interopérabilité
+
+- [`schemas/mission-lab-state.schema.json`](schemas/mission-lab-state.schema.json) — état portable d'une mission;
+- [`schemas/goalos-bridge.schema.json`](schemas/goalos-bridge.schema.json) — paquet UNI vers GoalOS.
+
+Le compilateur local n'appelle aucun modèle externe. Il propose des contributions à partir des écarts de capacités déclarés, laisse le responsable non assigné et exige une décision humaine.
 
 ### Données et confidentialité
 

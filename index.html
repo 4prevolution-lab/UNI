@@ -6,6 +6,8 @@
     <meta name="description" content="UNI Mission Lab — coordonner des capacités humaines et artificielles autour de missions vérifiables.">
     <meta name="theme-color" content="#0b1020">
     <title>UNI Mission Lab</title>
+    <link rel="manifest" href="app.webmanifest">
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
     <link rel="stylesheet" href="styles.css">
   </head>
   <body>
@@ -41,6 +43,7 @@
         </div>
         <div class="top-actions">
           <span class="save-state" id="saveState">● Sauvegardé localement</span>
+          <button class="quiet" id="installButton" hidden>Installer</button>
           <button class="quiet" id="importButton">Importer</button>
           <button class="button secondary" id="exportButton">Exporter</button>
           <input id="importInput" type="file" accept="application/json" hidden>
@@ -122,7 +125,7 @@
       </section>
 
       <section class="view" id="view-contributions">
-        <div class="page-title with-action"><div><span class="eyebrow accent">ÉTAPE 04</span><h1>Portefeuille de contributions</h1><p>Chaque activité relie mission, personne, capacité, rôle humain, IA et preuve attendue.</p></div><button class="button primary" id="addContribution">+ Contribution</button></div>
+        <div class="page-title with-action"><div><span class="eyebrow accent">ÉTAPE 04</span><h1>Portefeuille de contributions</h1><p>Chaque activité relie mission, personne, capacité, rôle humain, IA et preuve attendue.</p></div><div class="button-row"><button class="quiet" id="compileMission">Compiler la mission</button><button class="button primary" id="addContribution">+ Contribution</button></div></div>
         <div class="kanban" id="contributionBoard"></div>
       </section>
 

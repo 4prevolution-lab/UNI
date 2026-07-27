@@ -140,6 +140,26 @@ export function capabilityGaps(state) {
     .sort((a, b) => b.gap - a.gap);
 }
 
+export function compileContributionSuggestions(state) {
+  const existingCapabilities = new Set(
+    (state.contributions || []).flatMap((contribution) => contribution.capabilityIds || [])
+  );
+  const gaps = capabilityGaps(state);
+  const prioritized = gaps.length ? gaps : (state.capabilities || []).filter((capability) => !existingCapabilities.has(capability.id));
+  return prioritized.slice(0, 4).map((capability) => ({
+    title: `Renforcer : ${capability.name}`,
+    description: `Produire un livrable vérifiable qui réduit l’écart de capacité « ${capability.name} » pour la mission.`,
+    ownerId: "",
+    capabilityIds: [capability.id],
+    status: "planned",
+    humanRole: "Définir le livrable, exercer le jugement et accepter le résultat",
+    aiUse: "Assistant local utilisé uniquement pour proposer cette décomposition",
+    effort: "À estimer",
+    evidence: null,
+    validation: null
+  }));
+}
+
 export function claimLevel(contribution) {
   if (contribution.validation?.decision === "accepted") return "validated";
   if (contribution.evidence) return "demonstrated";

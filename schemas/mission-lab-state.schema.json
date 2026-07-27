@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uni.4prevolution.org/schemas/mission-lab-state/v0.1",
+  "title": "UNI Mission Lab State",
+  "type": "object",
+  "required": ["schema", "version", "mission", "capabilities", "people", "contributions", "activity"],
+  "properties": {
+    "schema": { "type": "string", "format": "uri" },
+    "version": { "const": "0.1" },
+    "mission": {
+      "type": "object",
+      "required": ["id", "title", "outcome", "owner", "status", "successCriteria", "stopConditions"],
+      "properties": {
+        "id": { "type": "string", "minLength": 1 },
+        "title": { "type": "string", "minLength": 1 },
+        "outcome": { "type": "string", "minLength": 1 },
+        "owner": { "type": "string", "minLength": 1 },
+        "status": { "enum": ["draft", "active", "paused", "complete", "stopped"] },
+        "successCriteria": { "type": "array", "items": { "type": "string" } },
+        "stopConditions": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "capabilities": { "type": "array", "items": { "$ref": "#/$defs/capability" } },
+    "people": { "type": "array", "items": { "$ref": "#/$defs/person" } },
+    "contributions": { "type": "array", "items": { "$ref": "#/$defs/contribution" } },
+    "activity": { "type": "array" }
+  },
+  "$defs": {
+    "capability": {
+      "type": "object",
+      "required": ["id", "name", "required", "available"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "required": { "type": "number", "minimum": 0 },
+        "available": { "type": "number", "minimum": 0 }
+      }
+    },
+    "person": {
+      "type": "object",
+      "required": ["id", "name", "consent", "visibility", "capabilities"],
+      "properties": {
+        "id": { "type": "string" },
+        "name": { "type": "string" },
+        "consent": { "type": "boolean" },
+        "visibility": { "enum": ["private", "mission", "public"] },
+        "capabilities": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "contribution": {
+      "type": "object",
+      "required": ["id", "title", "status", "humanRole", "aiUse", "capabilityIds"],
+      "properties": {
+        "id": { "type": "string" },
+        "title": { "type": "string" },
+        "status": { "enum": ["planned", "active", "review", "validated"] },
+        "humanRole": { "type": "string" },
+        "aiUse": { "type": "string" },
+        "capabilityIds": { "type": "array", "items": { "type": "string" } }
+      }
+    }
+  }
+}

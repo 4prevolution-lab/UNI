@@ -4,6 +4,7 @@ import {
   buildGoalOSExport,
   capabilityGaps,
   claimLevel,
+  compileContributionSuggestions,
   createDemoState,
   missionMetrics,
   normalizeState
@@ -42,4 +43,14 @@ test("l’export GoalOS conserve les garde-fous", () => {
 
 test("la normalisation rejette un état vide", () => {
   assert.throws(() => normalizeState(null));
+});
+
+test("le compilateur local cible les lacunes sans attribuer de responsable", () => {
+  const state = createDemoState();
+  const suggestions = compileContributionSuggestions(state);
+  assert.ok(suggestions.length >= 1);
+  assert.equal(suggestions[0].ownerId, "");
+  assert.equal(suggestions[0].status, "planned");
+  assert.match(suggestions[0].aiUse, /Assistant local/);
+  assert.ok(suggestions.every((suggestion) => suggestion.capabilityIds.length === 1));
 });

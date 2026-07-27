@@ -1,0 +1,35 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://uni.4prevolution.org/schemas/goalos-bridge/v0.1",
+  "title": "UNI to GoalOS Bridge",
+  "type": "object",
+  "required": ["schema", "exportedAt", "source", "mission", "proofPosture", "capabilities", "contributions"],
+  "properties": {
+    "schema": { "const": "https://uni.4prevolution.org/schemas/goalos-bridge/v0.1" },
+    "exportedAt": { "type": "string", "format": "date-time" },
+    "source": {
+      "type": "object",
+      "required": ["system", "version"],
+      "properties": {
+        "system": { "const": "UNI Mission Lab" },
+        "version": { "type": "string" }
+      }
+    },
+    "mission": {
+      "type": "object",
+      "required": ["id", "name", "objective", "owner", "status", "successCriteria", "stopConditions"]
+    },
+    "proofPosture": {
+      "type": "object",
+      "required": ["evidenceRate", "validationRate", "threshold", "ready"],
+      "properties": {
+        "evidenceRate": { "type": "number", "minimum": 0, "maximum": 100 },
+        "validationRate": { "type": "number", "minimum": 0, "maximum": 100 },
+        "threshold": { "type": "number", "minimum": 0, "maximum": 100 },
+        "ready": { "type": "boolean" }
+      }
+    },
+    "capabilities": { "type": "array" },
+    "contributions": { "type": "array" }
+  }
+}
