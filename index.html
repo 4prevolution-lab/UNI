@@ -29,7 +29,7 @@
         <button class="nav-item" data-route="goalos"><span>Ω</span> GoalOS</button>
       </nav>
       <div class="sidebar-foot">
-        <div class="privacy-badge"><i></i><span>Données locales<br><small>Aucune vente · export libre</small></span></div>
+        <div class="privacy-badge"><i></i><span id="runtimeMode">Données locales<br><small>Aucune vente · export libre</small></span></div>
         <button class="quiet full" id="resetDemo">Réinitialiser la démo</button>
       </div>
     </aside>
@@ -172,6 +172,7 @@
       </form>
     </dialog>
     <div class="toast" id="toast" hidden><strong></strong><span></span></div>
+    <script src="runtime-config.public.js"></script>
     <script type="module" src="app.js"></script>
   </body>
 </html>

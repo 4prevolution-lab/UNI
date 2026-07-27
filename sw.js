@@ -1,4 +1,4 @@
-const CACHE = "uni-mission-lab-v0.6";
+const CACHE = "uni-mission-lab-v0.7";
 const SHELL = [
   "./",
   "./index.html",
@@ -11,6 +11,8 @@ const SHELL = [
   "./styles.css",
   "./app.js",
   "./core.js",
+  "./runtime.js",
+  "./runtime-config.public.js",
   "./app.webmanifest",
   "./assets/icon.svg",
   "./schemas/mission-lab-state.schema.json",

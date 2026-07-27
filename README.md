@@ -63,6 +63,8 @@ Le dépôt contient maintenant un MVP fonctionnel de la boucle de mission :
 - export d'une charte de pilote et transfert direct vers Mission Lab.
 - portefeuille local multi-missions avec activation explicite;
 - duplication de modèles sans personnes, contributions, preuves ou historique.
+- fondation Supabase/PostgreSQL pour un runtime protégé multiutilisateur;
+- cinq rôles séparés, politiques RLS et chaîne d'audit calculée côté serveur.
 
 ### Lancer localement
 
@@ -94,6 +96,12 @@ Le vérificateur autonome est accessible dans [`verify.html`](verify.html). Les 
 Le [`Pilot Launchpad`](pilot.html) qualifie une communauté, une mission et ses règles de confiance avant de remplacer les données de démonstration. Il n'utilise aucun score opaque : les dix conditions sont visibles et vérifiables séparément.
 
 Le [`Mission Portfolio`](portfolio.html) conserve plusieurs espaces locaux et permet l'export d'une archive complète. Son schéma est documenté dans [`schemas/mission-portfolio.schema.json`](schemas/mission-portfolio.schema.json).
+
+## Runtime protégé
+
+Le dossier [`supabase`](supabase) contient la première migration du backend multiutilisateur. Le mode protégé reste désactivé par défaut : l'application continue d'annoncer clairement son stockage local tant qu'aucun projet contrôlé par UNI n'est configuré.
+
+La migration sépare les rôles `owner`, `facilitator`, `contributor`, `validator` et `observer`. Les preuves, validations et événements d'audit sont append-only. La chaîne d'audit est calculée par PostgreSQL, pas fournie par le navigateur.
 
 Le compilateur local n'appelle aucun modèle externe. Il propose des contributions à partir des écarts de capacités déclarés, laisse le responsable non assigné et exige une décision humaine.
 

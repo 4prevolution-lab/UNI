@@ -12,6 +12,7 @@ import {
   now,
   uid
 } from "./core.js";
+import { createRuntime } from "./runtime.js";
 
 const STORE = "uni-mission-lab-v0.1";
 const $ = (selector, root = document) => root.querySelector(selector);
@@ -20,6 +21,7 @@ let state = load();
 let currentRoute = "dashboard";
 let modalHandler = null;
 let saveTimer;
+const runtime = createRuntime();
 
 function load() {
   try {
@@ -107,6 +109,9 @@ function route(name) {
 }
 
 function render() {
+  $("#runtimeMode").innerHTML = runtime.mode === "protected"
+    ? `Runtime protégé<br><small>Supabase · RLS actif</small>`
+    : `Données locales<br><small>Aucune vente · export libre</small>`;
   $("#topMissionTitle").textContent = state.mission.title;
   renderDashboard();
   renderMission();
