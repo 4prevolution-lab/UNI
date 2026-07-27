@@ -9,8 +9,10 @@ import {
   claimLevel,
   compileContributionSuggestions,
   createDemoState,
+  evaluatePilot,
   missionMetrics,
   normalizeState,
+  pilotToMission,
   verifyProofBundle
 } from "../core.js";
 
@@ -77,4 +79,44 @@ test("les attestations ne sont créées que pour les validations acceptées et r
   assert.ok(drafts[0].type.includes("OpenBadgeCredential"));
   assert.equal(drafts[0].credentialStatus.status, "unsignedDraft");
   assert.equal("proof" in drafts[0], false);
+});
+
+test("un pilote n’est prêt que lorsque les dix conditions explicites passent", () => {
+  const pilot = {
+    community: "Collectif du quartier",
+    participants: 20,
+    owner: "Maya",
+    problem: "Le gaspillage alimentaire local reste élevé et non mesuré.",
+    beneficiaries: "Résidents du quartier",
+    outcome: "Détourner et mesurer 500 kg de nourriture en six semaines.",
+    durationWeeks: 6,
+    participation: "hybride",
+    consentPlan: true,
+    validationMethod: "Le responsable vérifie chaque pesée avec une seconde personne."
+  };
+  const evaluation = evaluatePilot(pilot);
+  assert.equal(evaluation.ready, true);
+  assert.equal(evaluation.passed, 10);
+  assert.equal(evaluatePilot({ ...pilot, participants: 80 }).ready, false);
+});
+
+test("une charte pilote devient une mission bornée", () => {
+  const mission = pilotToMission({
+    community: "Collectif",
+    participants: 18,
+    owner: "Maya",
+    missionTitle: "Mission test",
+    outcome: "Produire un résultat observable.",
+    beneficiaries: "Quartier",
+    durationWeeks: 4,
+    startDate: "2026-08-01",
+    participation: "bénévole",
+    successCriteria: "Critère A\nCritère B",
+    stopConditions: "Condition A",
+    validationMethod: "Revue humaine",
+    consentPlan: true
+  });
+  assert.equal(mission.deadline, "2026-08-29");
+  assert.deepEqual(mission.successCriteria, ["Critère A", "Critère B"]);
+  assert.equal(mission.pilot.participants, 18);
 });

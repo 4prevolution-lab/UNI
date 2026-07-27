@@ -266,6 +266,56 @@ export function buildCredentialDrafts(state) {
     });
 }
 
+export function evaluatePilot(pilot) {
+  const checks = [
+    { id: "community", label: "Communauté existante identifiée", pass: String(pilot.community || "").trim().length >= 3 },
+    { id: "participants", label: "Groupe de 15 à 40 personnes", pass: Number(pilot.participants) >= 15 && Number(pilot.participants) <= 40 },
+    { id: "owner", label: "Responsable humain nommé", pass: String(pilot.owner || "").trim().length >= 2 },
+    { id: "problem", label: "Problème concret décrit", pass: String(pilot.problem || "").trim().length >= 20 },
+    { id: "beneficiary", label: "Bénéficiaire identifiable", pass: String(pilot.beneficiaries || "").trim().length >= 3 },
+    { id: "outcome", label: "Résultat mesurable défini", pass: String(pilot.outcome || "").trim().length >= 20 },
+    { id: "duration", label: "Durée de quatre à huit semaines", pass: Number(pilot.durationWeeks) >= 4 && Number(pilot.durationWeeks) <= 8 },
+    { id: "participation", label: "Nature de la participation explicite", pass: ["bénévole", "éducative", "rémunérée", "hybride"].includes(pilot.participation) },
+    { id: "consent", label: "Consentement et retrait prévus", pass: Boolean(pilot.consentPlan) },
+    { id: "validation", label: "Méthode de validation humaine prévue", pass: String(pilot.validationMethod || "").trim().length >= 10 }
+  ];
+  const passed = checks.filter((check) => check.pass).length;
+  return {
+    checks,
+    passed,
+    total: checks.length,
+    ready: passed === checks.length,
+    status: passed === checks.length ? "ready" : passed >= 7 ? "nearly-ready" : "not-ready"
+  };
+}
+
+export function pilotToMission(pilot) {
+  const start = pilot.startDate ? new Date(`${pilot.startDate}T12:00:00`) : new Date();
+  const deadline = new Date(start);
+  deadline.setDate(deadline.getDate() + Number(pilot.durationWeeks || 6) * 7);
+  return {
+    id: uid("mission"),
+    title: pilot.missionTitle || "Mission pilote UNI",
+    outcome: pilot.outcome,
+    beneficiaries: pilot.beneficiaries,
+    owner: pilot.owner,
+    participation: pilot.participation,
+    deadline: deadline.toISOString().slice(0, 10),
+    status: "active",
+    successCriteria: String(pilot.successCriteria || pilot.outcome).split("\n").map((line) => line.trim()).filter(Boolean),
+    stopConditions: String(pilot.stopConditions || "Risques supérieurs à la valeur observée").split("\n").map((line) => line.trim()).filter(Boolean),
+    pilot: {
+      community: pilot.community,
+      participants: Number(pilot.participants),
+      durationWeeks: Number(pilot.durationWeeks),
+      language: pilot.language || "fr",
+      validationMethod: pilot.validationMethod,
+      consentPlan: Boolean(pilot.consentPlan)
+    },
+    createdAt: now()
+  };
+}
+
 export function buildGoalOSExport(state) {
   const metrics = missionMetrics(state);
   return {

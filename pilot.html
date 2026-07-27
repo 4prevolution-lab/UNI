@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#0b1020">
+    <title>Pilot Launchpad — UNI</title>
+    <link rel="icon" href="assets/icon.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body class="verifier-page">
+    <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+    <main class="pilot-shell">
+      <a class="brand verifier-brand" href="./"><span class="brand-mark">U</span><span><strong>UNI</strong><small>PILOT LAUNCHPAD</small></span></a>
+      <section class="pilot-heading">
+        <div><span class="eyebrow accent">DU PROTOTYPE AU TERRAIN</span><h1>Qualifier le premier pilote.</h1><p>Une mission étroite, une communauté réelle, des preuves explicites et une décision humaine.</p></div>
+        <div class="readiness-dial"><strong id="readinessValue">0/10</strong><small>conditions</small></div>
+      </section>
+      <div class="pilot-layout">
+        <form class="panel pilot-form" id="pilotForm">
+          <div class="section-label"><span>01</span><div><b>Communauté</b><small>Un groupe existant, pas un réseau hypothétique.</small></div></div>
+          <div class="form-grid compact">
+            <label>Communauté<input name="community" placeholder="Association, laboratoire, collectif…" required></label>
+            <label>Nombre de participants<input name="participants" type="number" min="1" value="20" required></label>
+            <label>Responsable humain<input name="owner" placeholder="Nom du responsable" required></label>
+            <label>Langue<select name="language"><option value="fr">Français</option><option value="en">English</option><option value="bilingual">Bilingue</option></select></label>
+          </div>
+          <div class="section-label"><span>02</span><div><b>Mission réelle</b><small>Quatre à huit semaines, un résultat observable.</small></div></div>
+          <div class="form-grid compact">
+            <label class="span-2">Titre de la mission<input name="missionTitle" placeholder="Ex. Réduire le gaspillage alimentaire du quartier" required></label>
+            <label class="span-2">Problème concret<textarea name="problem" rows="3" placeholder="Décrire la situation actuelle et son coût réel…" required></textarea></label>
+            <label class="span-2">Résultat mesurable<textarea name="outcome" rows="3" placeholder="Décrire le changement observable attendu…" required></textarea></label>
+            <label>Bénéficiaires<input name="beneficiaries" required></label>
+            <label>Durée<select name="durationWeeks"><option value="4">4 semaines</option><option value="5">5 semaines</option><option value="6" selected>6 semaines</option><option value="7">7 semaines</option><option value="8">8 semaines</option></select></label>
+            <label>Date de début<input name="startDate" type="date"></label>
+            <label>Participation<select name="participation"><option value="">À choisir</option><option value="bénévole">Bénévole</option><option value="éducative">Éducative</option><option value="rémunérée">Rémunérée</option><option value="hybride">Hybride</option></select></label>
+            <label class="span-2">Critères de succès <small>Un par ligne</small><textarea name="successCriteria" rows="3"></textarea></label>
+            <label class="span-2">Conditions d’arrêt <small>Une par ligne</small><textarea name="stopConditions" rows="3"></textarea></label>
+          </div>
+          <div class="section-label"><span>03</span><div><b>Confiance</b><small>Consentement, validation et révision humaine.</small></div></div>
+          <div class="form-grid compact">
+            <label class="span-2">Méthode de validation humaine<textarea name="validationMethod" rows="3" placeholder="Qui vérifie quoi, selon quels critères et avec quelle voie d’appel?"></textarea></label>
+            <label class="span-2 consent-line"><input name="consentPlan" type="checkbox"> Le pilote prévoit un consentement explicite, l’export et une voie de retrait.</label>
+          </div>
+          <div class="form-actions"><button type="button" class="quiet" id="exportCharter">Exporter la charte</button><button type="submit" class="button primary" id="launchPilot">Créer dans Mission Lab</button></div>
+        </form>
+        <aside class="panel readiness-panel">
+          <span class="eyebrow">CONDITIONS DE LANCEMENT</span>
+          <h2 id="readinessTitle">Pilote à définir</h2>
+          <p id="readinessNote">Complétez la charte pour évaluer les conditions explicites.</p>
+          <div class="readiness-list" id="readinessList"></div>
+          <div class="readiness-warning">UNI ne remplace pas une revue juridique, éthique ou sectorielle lorsque la mission l’exige.</div>
+        </aside>
+      </div>
+      <footer class="verifier-footer"><a href="./">← Retour au Mission Lab</a><span>Qualification transparente · Aucun score humain</span></footer>
+    </main>
+    <div class="toast" id="toast" hidden><strong></strong><span></span></div>
+    <script type="module" src="pilot.js"></script>
+  </body>
+</html>
