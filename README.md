@@ -115,12 +115,24 @@ Le compilateur local n'appelle aucun modèle externe. Il propose des contributio
 
 ### Données et confidentialité
 
-Cette première version ne possède pas de backend. Les données restent dans le stockage local du navigateur jusqu'à leur export explicite par l'utilisateur. La démonstration utilise des données synthétiques : aucune donnée confidentielle ne doit être saisie avant un déploiement protégé révisé.
+Sans configuration Supabase valide, l'application fonctionne exclusivement en mode local : les données restent dans le stockage du navigateur jusqu'à leur export explicite. Le dépôt contient une fondation backend protégée, mais elle n'est ni activée ni considérée comme prête pour un pilote tant que les migrations, l'authentification et les politiques RLS n'ont pas été validées sur un projet Supabase contrôlé par UNI.
+
+La démonstration utilise des données synthétiques. Aucune donnée confidentielle ne doit être saisie dans le mode local ni dans un environnement Supabase non révisé.
 
 ### Déploiement
 
 Le workflow GitHub Actions exécute les tests et déploie l'application sur GitHub Pages à chaque mise à jour de `main`, lorsque Pages est configuré avec la source **GitHub Actions** dans les paramètres du dépôt.
 
+Le build publie uniquement les fichiers nécessaires à l'application. Pour activer le runtime protégé, ajouter les secrets Actions `UNI_SUPABASE_URL` et `UNI_SUPABASE_ANON_KEY`; ils doivent être fournis ensemble. Sans ces valeurs, le même paquet reste volontairement en mode local.
+
 ## État actuel
 
-Version 0.1 — fondation stratégique et MVP statique. Les prochaines étapes sont de choisir la première communauté pilote, la première mission et le résultat mesurable, puis de remplacer la persistance locale par un environnement protégé multiutilisateur.
+Version 0.9.1 — MVP fonctionnel avec mode local, PWA, portefeuille multi-missions, preuves vérifiables et fondation multiutilisateur Supabase.
+
+Le code du MVP est testable et déployable comme démonstration statique. Le passage à un pilote réel exige encore :
+
+1. un projet Supabase contrôlé par UNI avec toutes les migrations appliquées;
+2. une vérification RLS et multiutilisateur avec plusieurs comptes de test;
+3. le choix de la communauté, de la mission et du résultat mesurable;
+4. une revue de sécurité et de confidentialité avant toute donnée réelle;
+5. un test pilote suivi d'une décision explicite de mise en production.
