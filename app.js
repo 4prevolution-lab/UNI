@@ -13,14 +13,19 @@ import {
   uid
 } from "./core.js";
 import { createRuntime } from "./runtime.js";
+import { ensureProtectedIds, loadProtectedState, syncProtectedState } from "./protected-state.js";
 
 const STORE = "uni-mission-lab-v0.1";
+const SESSION_KEY = "uni-protected-session-v0.1";
 const $ = (selector, root = document) => root.querySelector(selector);
 const $$ = (selector, root = document) => [...root.querySelectorAll(selector)];
 let state = load();
 let currentRoute = "dashboard";
 let modalHandler = null;
 let saveTimer;
+let syncTimer;
+let syncQueue = Promise.resolve();
+let protectedContext = null;
 const runtime = createRuntime();
 
 function load() {
@@ -33,12 +38,29 @@ function load() {
 }
 
 function save(message = "Modifications enregistrées.") {
-  localStorage.setItem(STORE, JSON.stringify(state));
+  if (protectedContext) ensureProtectedIds(state);
+  else localStorage.setItem(STORE, JSON.stringify(state));
   $("#saveState").textContent = "● Sauvegarde…";
   clearTimeout(saveTimer);
-  saveTimer = setTimeout(() => {
-    $("#saveState").textContent = "● Sauvegardé localement";
-  }, 450);
+  if (protectedContext) {
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(() => {
+      syncQueue = syncQueue.then(async () => {
+        $("#saveState").textContent = "● Synchronisation protégée…";
+        try {
+          await syncProtectedState(runtime, state, protectedContext);
+          $("#saveState").textContent = "● Synchronisé avec Supabase";
+        } catch (error) {
+          $("#saveState").textContent = "⚠ Synchronisation interrompue";
+          toast("Synchronisation impossible", error.message);
+        }
+      });
+    }, 600);
+  } else {
+    saveTimer = setTimeout(() => {
+      $("#saveState").textContent = "● Sauvegardé localement";
+    }, 450);
+  }
   if (message) toast("UNI Mission Lab", message);
 }
 
@@ -109,7 +131,7 @@ function route(name) {
 }
 
 function render() {
-  $("#runtimeMode").innerHTML = runtime.mode === "protected"
+  $("#runtimeMode").innerHTML = protectedContext
     ? `Runtime protégé<br><small>Supabase · RLS actif</small>`
     : `Données locales<br><small>Aucune vente · export libre</small>`;
   $("#topMissionTitle").textContent = state.mission.title;
@@ -488,6 +510,32 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("./sw.js").catch(() => {}));
 }
 
-const hash = window.location.hash.slice(1);
-if (["dashboard", "mission", "capabilities", "team", "contributions", "proof", "outcomes", "goalos"].includes(hash)) route(hash);
-else render();
+async function initializeMissionLab() {
+  const params = new URLSearchParams(location.search);
+  const workspaceId = params.get("workspace");
+  const missionId = params.get("mission");
+  if (runtime.configuration.configured && workspaceId && missionId) {
+    try {
+      const session = JSON.parse(sessionStorage.getItem(SESSION_KEY));
+      if (!session?.accessToken || session.expiresAt <= Date.now()) {
+        throw new Error("Session expirée. Reconnectez-vous dans le Centre d’accès.");
+      }
+      runtime.setSession(session.accessToken);
+      const user = await runtime.getUser();
+      state = await loadProtectedState(runtime, workspaceId, missionId);
+      protectedContext = {
+        workspaceId,
+        userId: user.id,
+        missionOwnerId: state.__protected.missionOwnerId
+      };
+      $("#saveState").textContent = "● Chargé depuis Supabase";
+    } catch (error) {
+      toast("Mission protégée inaccessible", error.message);
+    }
+  }
+  const hash = window.location.hash.slice(1);
+  if (["dashboard", "mission", "capabilities", "team", "contributions", "proof", "outcomes", "goalos"].includes(hash)) route(hash);
+  else render();
+}
+
+initializeMissionLab();

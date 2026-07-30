@@ -15,7 +15,7 @@ Une personne doit posséder une adhésion active et un consentement daté. Les p
 ## Mise en service
 
 1. Créer un projet Supabase appartenant à UNI.
-2. Appliquer les migrations dans l'ordre : `0001_uni_core.sql`, puis `0002_workspace_invites.sql`.
+2. Appliquer les migrations dans l'ordre : `0001_uni_core.sql`, `0002_workspace_invites.sql`, puis `0003_mission_lab_sync.sql`.
 3. Créer les profils lors de l'inscription et initialiser le propriétaire avec l'opération atomique prévue par la migration.
 4. Pour GitHub Pages, définir les secrets Actions `UNI_SUPABASE_URL` et `UNI_SUPABASE_ANON_KEY`. Le build génère alors `runtime-config.public.js` sans modifier le dépôt.
 5. Ne jamais y placer une clé privée ou `service_role`.

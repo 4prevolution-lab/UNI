@@ -94,6 +94,32 @@ export class UNIRuntime {
     return this.request(`missions?workspace_id=eq.${id}&select=*&order=updated_at.desc`);
   }
 
+  select(table, query = "") {
+    return this.request(`${table}${query ? `?${query}` : ""}`);
+  }
+
+  upsert(table, records) {
+    return this.request(`${table}?on_conflict=id`, {
+      method: "POST",
+      headers: { Prefer: "resolution=merge-duplicates,return=representation" },
+      body: JSON.stringify(records)
+    });
+  }
+
+  insert(table, records) {
+    return this.request(table, {
+      method: "POST",
+      body: JSON.stringify(records)
+    });
+  }
+
+  update(table, id, values) {
+    return this.request(`${table}?id=eq.${encodeURIComponent(id)}`, {
+      method: "PATCH",
+      body: JSON.stringify(values)
+    });
+  }
+
   saveProfile(profile) {
     return this.request("profiles?on_conflict=id", {
       method: "POST",
@@ -107,6 +133,10 @@ export class UNIRuntime {
       method: "POST",
       body: JSON.stringify(workspace)
     });
+  }
+
+  createMission(mission) {
+    return this.insert("missions", [mission]);
   }
 
   callRpc(name, parameters) {

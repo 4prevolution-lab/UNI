@@ -49,6 +49,20 @@
             <button class="button primary" type="submit">Créer l’espace</button>
           </form>
         </div>
+        <div class="auth-grid">
+          <form class="panel auth-card" id="missionCreateForm">
+            <span class="eyebrow">NOUVELLE MISSION</span><h2>Ouvrir un Mission Lab partagé</h2>
+            <label>Espace<select name="workspaceId" id="missionWorkspace" required></select></label>
+            <label>Titre<input name="title" required maxlength="180"></label>
+            <label>Résultat attendu<textarea name="outcome" required maxlength="600"></textarea></label>
+            <label>Participation<select name="participation"><option value="bénévole">Bénévole</option><option value="éducative">Éducative</option><option value="rémunérée">Rémunérée</option><option value="hybride" selected>Hybride</option></select></label>
+            <button class="button primary" type="submit">Créer la mission</button>
+          </form>
+          <section class="panel access-principles">
+            <span class="eyebrow">SYNCHRONISATION</span><h2>Une mission, deux modes</h2>
+            <ul class="guardrails"><li>Mode local sans compte</li><li>Mode partagé soumis aux rôles RLS</li><li>Preuves ajoutées sans écrasement</li><li>Validations historisées</li><li>Journal calculé côté serveur</li></ul>
+          </section>
+        </div>
         <div class="auth-grid collaboration-tools">
           <form class="panel auth-card" id="redeemInviteForm">
             <span class="eyebrow">REJOINDRE</span><h2>Utiliser une invitation</h2>

@@ -3,6 +3,7 @@ import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
 
 const sql = await readFile(new URL("../supabase/migrations/0001_uni_core.sql", import.meta.url), "utf8");
+const syncSql = await readFile(new URL("../supabase/migrations/0003_mission_lab_sync.sql", import.meta.url), "utf8");
 
 test("toutes les tables sensibles activent RLS", () => {
   for (const table of ["workspaces", "memberships", "missions", "participants", "contributions", "evidence", "validations", "audit_events"]) {
@@ -25,4 +26,18 @@ test("la chaîne d’audit est calculée par un déclencheur serveur", () => {
 test("le propriétaire initial est créé atomiquement", () => {
   assert.match(sql, /create trigger uni_workspace_owner_after_insert/i);
   assert.match(sql, /insert into public\.memberships/i);
+});
+
+test("la synchronisation conserve les capacités et réglages du Mission Lab", () => {
+  assert.match(syncSql, /add column completed_criteria integer\[\]/i);
+  assert.match(syncSql, /add column settings jsonb/i);
+  assert.match(syncSql, /add column goalos jsonb/i);
+  assert.match(syncSql, /add column capability_ids uuid\[\]/i);
+});
+
+test("les références protégées restent dans la même mission", () => {
+  assert.match(syncSql, /create trigger uni_participant_references_before_write/i);
+  assert.match(syncSql, /create trigger uni_contribution_references_before_write/i);
+  assert.match(syncSql, /capability\.mission_id <> new\.mission_id/i);
+  assert.match(syncSql, /participant\.mission_id = new\.mission_id/i);
 });

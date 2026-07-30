@@ -74,9 +74,15 @@ async function loadWorkspaces() {
   list.innerHTML = `<p class="lead">Chargement…</p>`;
   try {
     workspacesCache = await runtime.listWorkspaces();
-    list.innerHTML = workspacesCache.map((workspace) => `<article><div><b>${escapeHtml(workspace.name)}</b><small>${escapeHtml(workspace.data_classification)}</small></div><span class="status validated">autorisé</span></article>`).join("") || `<p class="lead">Aucun espace autorisé.</p>`;
+    const missionGroups = await Promise.all(workspacesCache.map(async (workspace) => ({
+      workspace,
+      missions: await runtime.listMissions(workspace.id)
+    })));
+    list.innerHTML = missionGroups.map(({ workspace, missions }) => `<article><div><b>${escapeHtml(workspace.name)}</b><small>${escapeHtml(workspace.data_classification)} · ${missions.length} mission${missions.length > 1 ? "s" : ""}</small>${missions.map((mission) => `<a class="text-button" href="index.html?workspace=${encodeURIComponent(workspace.id)}&mission=${encodeURIComponent(mission.id)}">${escapeHtml(mission.title)} →</a>`).join("")}</div><span class="status validated">autorisé</span></article>`).join("") || `<p class="lead">Aucun espace autorisé.</p>`;
     $("#inviteWorkspace").innerHTML = workspacesCache.map((workspace) => `<option value="${escapeHtml(workspace.id)}">${escapeHtml(workspace.name)}</option>`).join("");
+    $("#missionWorkspace").innerHTML = workspacesCache.map((workspace) => `<option value="${escapeHtml(workspace.id)}">${escapeHtml(workspace.name)}</option>`).join("");
     $("#createInviteForm").querySelector("button[type=submit]").disabled = workspacesCache.length === 0;
+    $("#missionCreateForm").querySelector("button[type=submit]").disabled = workspacesCache.length === 0;
   } catch (error) {
     list.innerHTML = `<p class="lead">${escapeHtml(error.message)}</p>`;
   }
@@ -117,6 +123,28 @@ $("#workspaceForm").addEventListener("submit", async (event) => {
     await loadWorkspaces();
   } catch (error) {
     toast("Création impossible", error.message);
+  }
+});
+
+$("#missionCreateForm").addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    const data = new FormData(event.currentTarget);
+    const result = await runtime.createMission({
+      workspace_id: data.get("workspaceId"),
+      title: data.get("title"),
+      outcome: data.get("outcome"),
+      owner_id: user.id,
+      participation: data.get("participation"),
+      status: "draft"
+    });
+    const mission = result[0];
+    event.currentTarget.reset();
+    toast("Mission créée", "Le Mission Lab partagé est prêt à être ouvert.");
+    await loadWorkspaces();
+    location.href = `index.html?workspace=${encodeURIComponent(mission.workspace_id)}&mission=${encodeURIComponent(mission.id)}`;
+  } catch (error) {
+    toast("Mission non créée", error.message);
   }
 });
 

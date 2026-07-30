@@ -69,6 +69,9 @@ Le dépôt contient maintenant un MVP fonctionnel de la boucle de mission :
 - création de profils et d'espaces protégés soumise à RLS.
 - invitations temporaires par rôle, expiration et nombre d'utilisations;
 - codes stockés uniquement sous forme d'empreinte SHA-256.
+- ouverture et synchronisation du Mission Lab depuis un espace protégé;
+- persistance normalisée des capacités, participants et contributions;
+- ajout append-only des preuves, validations successives et événements d'audit.
 
 ### Lancer localement
 
@@ -103,13 +106,17 @@ Le [`Mission Portfolio`](portfolio.html) conserve plusieurs espaces locaux et pe
 
 ## Runtime protégé
 
-Le dossier [`supabase`](supabase) contient la première migration du backend multiutilisateur. Le mode protégé reste désactivé par défaut : l'application continue d'annoncer clairement son stockage local tant qu'aucun projet contrôlé par UNI n'est configuré.
+Le dossier [`supabase`](supabase) contient les migrations du backend multiutilisateur. Le mode protégé reste désactivé par défaut : l'application continue d'annoncer clairement son stockage local tant qu'aucun projet contrôlé par UNI n'est configuré.
 
 La migration sépare les rôles `owner`, `facilitator`, `contributor`, `validator` et `observer`. Les preuves, validations et événements d'audit sont append-only. La chaîne d'audit est calculée par PostgreSQL, pas fournie par le navigateur.
 
 Le [`Centre d'accès`](account.html) reste verrouillé tant que le runtime n'est pas configuré. Lorsqu'il est actif, le jeton est conservé dans `sessionStorage`, retiré immédiatement de l'URL et perdu à la fermeture de la session du navigateur.
 
 La migration `0002_workspace_invites.sql` ajoute des invitations bornées. Le code en clair est retourné une seule fois; PostgreSQL ne conserve que son empreinte. Un facilitateur ne peut pas inviter un autre facilitateur, et le rôle d'une adhésion existante n'est jamais rétrogradé par un code.
+
+La migration `0003_mission_lab_sync.sql` complète les champs nécessaires à la synchronisation du Mission Lab. Le Centre d'accès permet ensuite de créer une mission partagée et de l'ouvrir dans l'interface principale. Les modifications ordinaires sont synchronisées dans les tables normalisées; une nouvelle version de preuve ou de validation ajoute un enregistrement au lieu d'écraser l'historique.
+
+Une mission protégée n'est jamais recopiée dans `localStorage` : elle reste en mémoire pendant la page active et doit être rechargée depuis Supabase lors d'une nouvelle session.
 
 Le compilateur local n'appelle aucun modèle externe. Il propose des contributions à partir des écarts de capacités déclarés, laisse le responsable non assigné et exige une décision humaine.
 
@@ -127,7 +134,7 @@ Le build publie uniquement les fichiers nécessaires à l'application. Pour acti
 
 ## État actuel
 
-Version 0.9.1 — MVP fonctionnel avec mode local, PWA, portefeuille multi-missions, preuves vérifiables et fondation multiutilisateur Supabase.
+Version 0.10.0 — MVP fonctionnel avec mode local, PWA, portefeuille multi-missions, preuves vérifiables et synchronisation multiutilisateur Supabase.
 
 Le code du MVP est testable et déployable comme démonstration statique. Le passage à un pilote réel exige encore :
 

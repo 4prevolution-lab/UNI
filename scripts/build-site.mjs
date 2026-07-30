@@ -18,6 +18,7 @@ const publicFiles = [
   "app.js",
   "core.js",
   "runtime.js",
+  "protected-state.js",
   "runtime-config.public.js",
   "sw.js",
   "app.webmanifest",
